@@ -1,0 +1,24 @@
+package com.tony.linktalk.adapter.out.persistence.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
+@Entity
+@Table(name = "chat_room")
+public class ChatRoomEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @JoinColumn(name = "created_by")
+    private Long createdBy; // 생성자 MemberEntity ID
+
+}
