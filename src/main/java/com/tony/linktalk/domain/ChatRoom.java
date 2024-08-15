@@ -11,13 +11,14 @@ public class ChatRoom {
 
     private Long chatRoomId;
     private String name;
-    private Long createdBy; // 생성자 MemberEntity ID
+    private Long creatorId; // 생성자 Member ID
+
 
     // factory method
-    public static ChatRoom of(String name, Long createdBy) {
+    public static ChatRoom of(String name, Long creatorId) {
         return ChatRoom.builder()
                 .name(name)
-                .createdBy(createdBy)
+                .creatorId(creatorId)
                 .build();
     }
 

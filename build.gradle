@@ -45,6 +45,8 @@ dependencies {
     // mapstruct
     implementation 'org.mapstruct:mapstruct:1.6.0'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.0'
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0' // lombok과의 충돌 방지
+
 
     // kafka
     implementation 'org.springframework.kafka:spring-kafka'
