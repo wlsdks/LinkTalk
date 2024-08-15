@@ -1,13 +1,23 @@
 package com.tony.linktalk.adapter.out.persistence.adapter;
 
+import com.tony.linktalk.adapter.out.persistence.entity.ChatMessageEntity;
+import com.tony.linktalk.adapter.out.persistence.repository.ChatMessageRepository;
 import com.tony.linktalk.application.port.out.chat.CreateChatMessagePort;
+import com.tony.linktalk.application.port.out.chat.FindChatMessagePort;
 import com.tony.linktalk.domain.ChatMessage;
+import com.tony.linktalk.mapper.ChatMessageMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component
-public class ChatMessagePersistenceAdapter implements CreateChatMessagePort {
+public class ChatMessagePersistenceAdapter implements CreateChatMessagePort, FindChatMessagePort {
+
+    private final ChatMessageRepository chatMessageRepository;
+    private final ChatMessageMapper chatMessageMapper;
 
 
     /**
@@ -18,6 +28,18 @@ public class ChatMessagePersistenceAdapter implements CreateChatMessagePort {
     @Override
     public ChatMessage createChatMessage(ChatMessage chatMessage) {
         return null;
+    }
+
+
+    /**
+     * @param roomId Long
+     * @return List<ChatMessage>
+     * @apiNote 채팅방의 메시지 목록을 조회하는 비즈니스 로직
+     */
+    @Override
+    public List<ChatMessage> findAllMessagesByRoomId(Long roomId) {
+        List<ChatMessageEntity> chatMessageEntities = chatMessageRepository.findChatMessageEntitiesByChatRoomEntity_Id(roomId);
+        return chatMessageMapper.entitiesToDomains(chatMessageEntities);
     }
 
 }
