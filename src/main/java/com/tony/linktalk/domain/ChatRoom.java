@@ -3,7 +3,7 @@ package com.tony.linktalk.domain;
 import lombok.*;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 @Builder
 @Getter
 public class ChatRoom {

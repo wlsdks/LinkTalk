@@ -4,7 +4,7 @@ import com.tony.linktalk.adapter.in.web.dto.ChatMessageDto;
 import lombok.*;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 @Builder
 @Getter
 public class CreateChatMessageCommand {

@@ -5,7 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 @Builder
 @Getter
 public class ChatMessage {

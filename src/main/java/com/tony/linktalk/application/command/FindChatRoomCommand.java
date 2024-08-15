@@ -3,7 +3,7 @@ package com.tony.linktalk.application.command;
 import lombok.*;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 @Builder
 @Getter
 public class FindChatRoomCommand {
