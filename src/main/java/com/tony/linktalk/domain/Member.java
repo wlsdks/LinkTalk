@@ -6,10 +6,11 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @Builder
+@Setter
 @Getter
 public class Member {
 
-    private Long id;
+    private Long memberId;
     private String username;
     private String nickname;
     private String email;

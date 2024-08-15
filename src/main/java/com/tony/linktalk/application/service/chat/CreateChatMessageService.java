@@ -1,6 +1,6 @@
 package com.tony.linktalk.application.service.chat;
 
-import com.tony.linktalk.adapter.in.web.dto.ChatMessageDto;
+import com.tony.linktalk.adapter.in.web.dto.response.ResponseChatMessageDto;
 import com.tony.linktalk.application.command.CreateChatMessageCommand;
 import com.tony.linktalk.application.port.out.chat.CreateChatMessagePort;
 import com.tony.linktalk.domain.ChatMessage;
@@ -28,7 +28,7 @@ public class CreateChatMessageService {
         ChatMessage savedChatMessage = createChatMessagePort.createChatMessage(chatMessage);
 
         // 3. 저장된 메시지를 DTO로 변환
-        ChatMessageDto responseDto = chatMessageMapper.domainToDto(savedChatMessage);
+        ResponseChatMessageDto responseDto = chatMessageMapper.domainToResponseDto(savedChatMessage);
     }
 
 }

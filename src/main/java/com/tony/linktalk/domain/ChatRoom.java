@@ -5,10 +5,11 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @Builder
+@Setter
 @Getter
 public class ChatRoom {
 
-    private Long id;
+    private Long chatRoomId;
     private String name;
     private Long createdBy; // 생성자 MemberEntity ID
 

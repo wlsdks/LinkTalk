@@ -1,7 +1,7 @@
 package com.tony.linktalk.config.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tony.linktalk.adapter.in.web.dto.ChatMessageDto;
+import com.tony.linktalk.adapter.in.web.dto.response.ResponseChatMessageDto;
 import com.tony.linktalk.application.command.CreateChatMessageCommand;
 import com.tony.linktalk.application.service.chat.CreateChatMessageService;
 import lombok.RequiredArgsConstructor;
@@ -51,10 +51,10 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         String payload = message.getPayload();
 
         // ChatMessageDto로 변환
-        ChatMessageDto chatMessageDto = objectMapper.readValue(payload, ChatMessageDto.class);
+        ResponseChatMessageDto responseChatMessageDto = objectMapper.readValue(payload, ResponseChatMessageDto.class);
 
         // DTO를 Command로 변환
-        CreateChatMessageCommand command = CreateChatMessageCommand.of(chatMessageDto);
+        CreateChatMessageCommand command = CreateChatMessageCommand.of(responseChatMessageDto);
 
         // 메시지를 DB에 저장
         createChatMessageService.processChatMessage(command);

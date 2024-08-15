@@ -1,6 +1,6 @@
 package com.tony.linktalk.application.command;
 
-import com.tony.linktalk.adapter.in.web.dto.ChatMessageDto;
+import com.tony.linktalk.adapter.in.web.dto.response.ResponseChatMessageDto;
 import lombok.*;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -14,11 +14,11 @@ public class CreateChatMessageCommand {
     private String content;
 
     // factory method
-    public static CreateChatMessageCommand of(ChatMessageDto chatMessageDto) {
+    public static CreateChatMessageCommand of(ResponseChatMessageDto responseChatMessageDto) {
         return CreateChatMessageCommand.builder()
-                .chatRoomId(chatMessageDto.getChatRoomId())
-                .senderId(chatMessageDto.getSenderId())
-                .content(chatMessageDto.getContent())
+                .chatRoomId(responseChatMessageDto.getChatRoomId())
+                .senderId(responseChatMessageDto.getSenderId())
+                .content(responseChatMessageDto.getContent())
                 .build();
     }
 
