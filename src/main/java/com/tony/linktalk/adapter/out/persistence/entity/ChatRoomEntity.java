@@ -19,6 +19,9 @@ public class ChatRoomEntity {
     private String name;
 
     @JoinColumn(name = "creator_id")
-    private Long creatorId; // 생성자 MemberEntity ID
+    private Long creatorId;
+
+    @JoinColumn(name = "sender_id")
+    private Long senderId;
 
 }

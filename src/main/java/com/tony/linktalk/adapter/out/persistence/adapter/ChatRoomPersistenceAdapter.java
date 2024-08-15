@@ -2,6 +2,7 @@ package com.tony.linktalk.adapter.out.persistence.adapter;
 
 import com.tony.linktalk.adapter.out.persistence.entity.ChatRoomEntity;
 import com.tony.linktalk.adapter.out.persistence.repository.ChatRoomRepository;
+import com.tony.linktalk.application.port.out.chatroom.CreateChatRoomPort;
 import com.tony.linktalk.application.port.out.chatroom.FindChatRoomPort;
 import com.tony.linktalk.domain.ChatRoom;
 import com.tony.linktalk.mapper.ChatRoomMapper;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Component
-public class ChatRoomPersistenceAdapter implements FindChatRoomPort {
+public class ChatRoomPersistenceAdapter implements FindChatRoomPort, CreateChatRoomPort {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomMapper chatRoomMapper;
@@ -37,6 +38,19 @@ public class ChatRoomPersistenceAdapter implements FindChatRoomPort {
     public List<ChatRoom> findChatRoomsByMemberId(Long memberId) {
         List<ChatRoomEntity> chatRoomEntities = chatRoomRepository.findChatRoomEntitiesByCreatorId(memberId);
         return chatRoomMapper.entitiesToDomains(chatRoomEntities);
+    }
+
+
+    /**
+     * @param chatRoom ChatRoom
+     * @return ChatRoom
+     * @apiNote 1:1 DM 채팅방을 생성한다.
+     */
+    @Override
+    public ChatRoom createDmChatRoom(ChatRoom chatRoom) {
+        ChatRoomEntity chatRoomEntity = chatRoomMapper.domainToEntity(chatRoom);
+        ChatRoomEntity savedChatRoomEntity = chatRoomRepository.save(chatRoomEntity);
+        return chatRoomMapper.entityToDomain(savedChatRoomEntity);
     }
 
 }
