@@ -1,4 +1,4 @@
 package com.tony.linktalk.application.port.out.chat;
 
-public interface FindChatPort {
+public interface FindChatMessagePort {
 }
