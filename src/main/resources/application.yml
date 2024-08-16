@@ -6,6 +6,13 @@ server:
       enabled: true
       force: true
 
+# JWT 설정
+jwt:
+  jwtSecret: "aVeryLongSecretKeyThatIsAtLeast32BytesLongForSecurity"
+  jwtExpirationMs: 3600000 # 1시간 (밀리초 단위)
+  jwtRefreshExpirationMs: 86400000 # 24시간 (밀리초 단위)
+  refreshTokenDurationMinutes: 1440 # 24시간 (분 단위)
+
 spring:
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=PostgreSQL
@@ -31,4 +38,4 @@ spring:
     database: h2
   p6spy:
     filter:
-      include: .* # ?? SQL ??? P6Spy? ??
+      include: .*
