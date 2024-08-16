@@ -1,0 +1,43 @@
+### 로그인
+POST http://localhost:8090/member/auth/signIn
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "1234"
+}
+
+### 회원 가입
+POST http://localhost:8090/member/auth/signUp
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "1234",
+  "name": "testName",
+  "nickname": "testNickname",
+  "profilePictureUrl": "test.com",
+  "introduction": "this is test",
+  "phoneNumber": "010-2222-4432",
+  "address": "test",
+  "birthDate": "2021-08-15T17:00:00",
+  "gender": "male",
+  "statusMessage": "test"
+}
+
+### 로그아웃
+POST http://localhost:8090/member/auth/signOut
+Content-Type: application/json
+
+{
+  "email": "test@test.com"
+}
+
+### 액세스 토큰 재발급
+POST http://localhost:8090/member/auth/reIssueAccessToken
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzIzODIzMDkwLCJleHAiOjE3MjM4MjY2OTB9.MQs6-hFU38gMFiBxC5MFA4GB_6D52_kms5Rs_pY6zlACg1S3F6lFWUl9DKanvhbW
+
+{
+  "refreshToken": "6958a173-362b-4ecc-8d0c-0858f4edb52e"
+}
