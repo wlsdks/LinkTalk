@@ -2,8 +2,8 @@ package com.tony.linktalk.config.websocket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tony.linktalk.adapter.in.web.dto.response.ResponseChatMessageDto;
-import com.tony.linktalk.application.command.CreateChatMessageCommand;
+import com.tony.linktalk.adapter.in.web.dto.response.chat.message.ChatMessageResponseDto;
+import com.tony.linktalk.application.command.chat.message.CreateChatMessageCommand;
 import com.tony.linktalk.application.service.chat.CreateChatMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -101,9 +101,9 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      */
     private String saveChatMessage(TextMessage message) throws JsonProcessingException {
         String payload = message.getPayload();
-        ResponseChatMessageDto responseChatMessageDto = objectMapper.readValue(payload, ResponseChatMessageDto.class);
+        ChatMessageResponseDto chatMessageResponseDto = objectMapper.readValue(payload, ChatMessageResponseDto.class);
 
-        CreateChatMessageCommand command = CreateChatMessageCommand.of(responseChatMessageDto);
+        CreateChatMessageCommand command = CreateChatMessageCommand.of(chatMessageResponseDto);
         createChatMessageService.processChatMessage(command);
         return payload;
     }

@@ -1,4 +1,4 @@
-package com.tony.linktalk.adapter.in.web.dto.request;
+package com.tony.linktalk.adapter.in.web.dto.request.chat.room;
 
 import lombok.*;
 
@@ -7,14 +7,14 @@ import lombok.*;
 @Builder
 @Setter
 @Getter
-public class RequestChatRoomDto {
+public class ChatRoomRequestDto {
 
     private String name;
     private Long senderId; // DM 상대방 Member ID
 
     // factory method
-    public static RequestChatRoomDto of(String name, Long senderId) {
-        return RequestChatRoomDto.builder()
+    public static ChatRoomRequestDto of(String name, Long senderId) {
+        return ChatRoomRequestDto.builder()
                 .name(name)
                 .senderId(senderId)
                 .build();

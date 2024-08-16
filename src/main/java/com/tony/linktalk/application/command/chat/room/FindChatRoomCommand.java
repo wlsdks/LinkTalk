@@ -1,4 +1,4 @@
-package com.tony.linktalk.application.command;
+package com.tony.linktalk.application.command.chat.room;
 
 import lombok.*;
 

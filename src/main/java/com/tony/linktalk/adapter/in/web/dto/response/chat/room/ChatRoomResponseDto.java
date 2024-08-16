@@ -1,4 +1,4 @@
-package com.tony.linktalk.adapter.in.web.dto.response;
+package com.tony.linktalk.adapter.in.web.dto.response.chat.room;
 
 import lombok.*;
 
@@ -6,14 +6,14 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Getter
-public class ResponseChatRoomDto {
+public class ChatRoomResponseDto {
 
     private Long id;
     private String name;
 
     // factory method
-    public static ResponseChatRoomDto of(Long id, String name) {
-        return ResponseChatRoomDto.builder()
+    public static ChatRoomResponseDto of(Long id, String name) {
+        return ChatRoomResponseDto.builder()
                 .id(id)
                 .name(name)
                 .build();
