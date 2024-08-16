@@ -1,8 +1,8 @@
 package com.tony.linktalk.mapper;
 
-import com.tony.linktalk.adapter.in.web.dto.response.ResponseChatRoomDto;
+import com.tony.linktalk.adapter.in.web.dto.response.chat.room.ChatRoomResponseDto;
 import com.tony.linktalk.adapter.out.persistence.entity.ChatRoomEntity;
-import com.tony.linktalk.application.command.CreateChatRoomCommand;
+import com.tony.linktalk.application.command.chat.room.CreateChatRoomCommand;
 import com.tony.linktalk.domain.ChatRoom;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -22,9 +22,9 @@ public interface ChatRoomMapper {
     List<ChatRoom> entitiesToDomains(List<ChatRoomEntity> chatRoomEntities);
 
     @Mapping(target = "id", source = "chatRoomId")
-    ResponseChatRoomDto domainToResponseDto(ChatRoom chatRoom);
+    ChatRoomResponseDto domainToResponseDto(ChatRoom chatRoom);
 
-    List<ResponseChatRoomDto> domainsToResponseDtos(List<ChatRoom> chatRooms);
+    List<ChatRoomResponseDto> domainsToResponseDtos(List<ChatRoom> chatRooms);
 
     ChatRoom commandToDomain(CreateChatRoomCommand command);
 
