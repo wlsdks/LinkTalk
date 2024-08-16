@@ -36,6 +36,12 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         // 새로운 WebSocket 세션이 연결되면 세션을 리스트에 추가
         sessions.add(session);
+
+        // 세션에서 채팅방 ID를 추출하거나 세션 맵에 저장
+        Long chatRoomId = getChatRoomIdFromSession(session);
+
+        // 채팅방 입장 메시지 브로드캐스트
+        broadcastToRoom(chatRoomId, "사용자가 채팅방에 입장했습니다.");
     }
 
 
@@ -59,12 +65,27 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         // 메시지를 DB에 저장
         createChatMessageService.processChatMessage(command);
 
-        // 메시지를 같은 채팅방의 모든 클라이언트에게 전송
-        for (WebSocketSession webSocketSession : sessions) {
-            if (webSocketSession.isOpen()) {
-                webSocketSession.sendMessage(new TextMessage(payload));
-            }
-        }
+        // 사용자의 닉네임을 세션에서 가져와서 메시지에 포함
+        String nickname = (String) session.getAttributes().get("nickname");
+
+        // 채팅방 ID를 세션에서 가져옴
+        Long chatRoomId = getChatRoomIdFromSession(session);
+
+        // 채팅방에 메시지를 브로드캐스트
+        broadcastToRoom(chatRoomId, payload + " from " + nickname);
+    }
+
+
+    /**
+     * @param session   WebSocketSession
+     * @param exception Throwable
+     * @throws Exception Exception
+     * @apiNote WebSocket 연결 중 에러가 발생하면 해당 세션을 sessions 리스트에서 제거하여 메모리 누수를 방지한다.
+     */
+    @Override
+    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+        // WebSocket 연결 중 에러가 발생하면 세션을 리스트에서 제거
+        sessions.remove(session);
     }
 
 
@@ -78,6 +99,37 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         // WebSocket 세션이 종료되면 세션을 리스트에서 제거
         sessions.remove(session);
+    }
+
+
+    /**
+     * @param session WebSocketSession
+     * @return 채팅방 ID
+     * @apiNote WebSocket 세션에서 채팅방 ID를 추출합니다.
+     * 일반적으로 WebSocket 세션이 시작될 때 채팅방 ID를 클라이언트에서 전달받아 세션 속성에 저장하는 방식으로 구현할 수 있습니다.
+     */
+    private Long getChatRoomIdFromSession(WebSocketSession session) {
+        // 세션의 속성에서 채팅방 ID를 가져옴 (클라이언트가 연결 시에 채팅방 ID를 전송했다고 가정)
+        return (Long) session.getAttributes().get("chatRoomId");
+    }
+
+
+    /**
+     * @param chatRoomId 채팅방 ID
+     * @param message    메시지
+     * @throws Exception Exception
+     * @apiNote 이 메서드는 특정 채팅방에 속한 모든 사용자에게 메시지를 전송하는 역할을 한다.
+     */
+    private void broadcastToRoom(Long chatRoomId, String message) throws Exception {
+        for (WebSocketSession session : sessions) {
+            // 세션에서 채팅방 ID를 가져와서 동일한 채팅방에 속한 사용자에게만 메시지를 전송
+            Long sessionChatRoomId = getChatRoomIdFromSession(session);
+            if (sessionChatRoomId != null && sessionChatRoomId.equals(chatRoomId)) {
+                if (session.isOpen()) {
+                    session.sendMessage(new TextMessage(message));
+                }
+            }
+        }
     }
 
 }
