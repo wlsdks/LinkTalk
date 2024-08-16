@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 회원 인증 관련 비즈니스 로직을 처리하는 서비스 클래스
  * 회원 인증, JWT 관련 로직을 처리합니다.
- * Auth service는 member와
+ * Auth service는 member와 jwt를 다루는 비즈니스 로직을 처리합니다.
  */
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
