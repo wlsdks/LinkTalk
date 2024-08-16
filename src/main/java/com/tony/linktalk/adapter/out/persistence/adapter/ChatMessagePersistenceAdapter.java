@@ -7,6 +7,8 @@ import com.tony.linktalk.application.port.out.chat.FindChatMessagePort;
 import com.tony.linktalk.domain.ChatMessage;
 import com.tony.linktalk.mapper.ChatMessageMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -37,9 +39,9 @@ public class ChatMessagePersistenceAdapter implements CreateChatMessagePort, Fin
      * @apiNote 채팅방의 메시지 목록을 조회하는 비즈니스 로직
      */
     @Override
-    public List<ChatMessage> findAllMessagesByRoomId(Long roomId) {
-        List<ChatMessageEntity> chatMessageEntities = chatMessageRepository.findChatMessageEntitiesByChatRoomEntity_Id(roomId);
-        return chatMessageMapper.entitiesToDomains(chatMessageEntities);
+    public Page<ChatMessage> findAllMessagesByRoomId(Long roomId, Pageable pageable) {
+        Page<ChatMessageEntity> chatMessageEntities = chatMessageRepository.findChatMessageEntitiesByChatRoomEntity_Id(roomId, pageable);
+        return chatMessageEntities.map(chatMessageMapper::entityToDomain);
     }
 
 }
