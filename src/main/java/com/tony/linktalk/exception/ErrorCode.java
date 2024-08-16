@@ -27,8 +27,11 @@ public enum ErrorCode {
     REFRESH_TOKEN_EXPIRATION_DATE_NOT_FOUND("REF002", "Refresh token expiration date not found"),
     REFRESH_TOKEN_EXPIRED("REF003", "Refresh token expired"),
 
-
+    // data not found errors
     DATA_NOT_FOUND("DATA001", "Data not found"),
+
+    // authentication errors
+    AUTHENTICATION_NOT_FOUND("AUTH001", "Authentication not found"),
 
 
     ;

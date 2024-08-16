@@ -66,12 +66,7 @@ public class RefreshTokenPersistenceAdapter implements CreateRefreshTokenPort, F
      */
     @Override
     public RefreshToken findRefreshToken(RefreshToken refreshToken) {
-        RefreshTokenEntity refreshTokenEntity = refreshTokenMapper.domainToEntity(refreshToken);
-        validRefreshTokenEntity(refreshTokenEntity);
-
-        // 이메일을 통해 RefreshToken 조회
-        String email = refreshTokenEntity.getMemberEntity().getEmail();
-        RefreshTokenEntity findRefreshTokenEntity = refreshTokenRepository.findRefreshTokenEntityByMemberEntity_Email(email)
+        RefreshTokenEntity findRefreshTokenEntity = refreshTokenRepository.findRefreshTokenEntityByToken(refreshToken.getToken())
                 .orElseThrow(() -> new LinkTalkException(ErrorCode.DATA_NOT_FOUND));
 
         return refreshTokenMapper.entityToDomain(findRefreshTokenEntity);

@@ -100,10 +100,7 @@ public class SecurityConfig {
                 .exceptionHandling(e -> e.authenticationEntryPoint(authJwtEntryPoint)) // 인증 예외 처리
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 상태 비저장 설정
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/auth/**").permitAll()              // 인증 없이 접근 가능한 경로 설정
-                        .requestMatchers("/auth/signUp").permitAll()          // 회원가입은 인증 없이 접근 가능
-                        .requestMatchers("/role/create").permitAll()          // 역할 생성은 인증 없이 접근 가능
-                        .requestMatchers("/role/createRoles").permitAll()     // 역할 생성은 인증 없이 접근 가능
+                    auth.requestMatchers("/member/**").permitAll()            // 인증 없이 접근 가능한 경로 설정
                         .anyRequest().authenticated();                                 // 나머지 요청은 인증 필요
                 })
                 .authenticationProvider(authenticationProvider())                      // DaoAuthenticationProvider를 인증 제공자로 설정

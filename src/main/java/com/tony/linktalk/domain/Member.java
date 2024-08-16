@@ -43,6 +43,14 @@ public class Member {
 
 
     // factory method
+    public static Member fromEmail(String email) {
+        return Member.builder()
+                .email(email)
+                .build();
+    }
+
+
+    // factory method
     public static Member of(Long id, String email, String name, LocalDateTime lastLogin) {
         return Member.builder()
                 .id(id)

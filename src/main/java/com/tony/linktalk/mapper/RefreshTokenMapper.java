@@ -16,6 +16,7 @@ public interface RefreshTokenMapper {
     @Mapping(target = "memberEntity", source = "member")
     RefreshTokenEntity domainToEntity(RefreshToken refreshToken);
 
+    @Mapping(target = "member", source = "memberEntity")
     RefreshToken entityToDomain(RefreshTokenEntity refreshTokenEntity);
 
 }

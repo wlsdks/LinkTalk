@@ -85,4 +85,13 @@ public class RefreshToken {
         }
     }
 
+
+    /**
+     * @param email 이메일
+     * @apiNote 회원을 생성하면서 이메일 정보를 세팅한다.
+     */
+    public void changeEmail(String email) {
+        this.member = Member.fromEmail(email);
+    }
+
 }

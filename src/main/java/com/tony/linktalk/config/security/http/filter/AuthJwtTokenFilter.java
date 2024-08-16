@@ -49,6 +49,7 @@ public class AuthJwtTokenFilter extends OncePerRequestFilter {
         try {
             // 1. JWT 토큰을 요청에서 추출
             String jwt = parseJwt(request);
+
             if (jwt != null && jwtTokenProvider.validateJwtToken(jwt)) {
                 // 2. JWT 토큰이 유효한 경우, 이메일을 추출
                 String email = jwtTokenProvider.getEmailFromJwtToken(jwt);
@@ -73,20 +74,18 @@ public class AuthJwtTokenFilter extends OncePerRequestFilter {
 
 
     /**
-     * HTTP 요청에서 JWT 토큰을 추출하는 메서드
-     *
      * @param request HttpServletRequest 객체
      * @return 추출된 JWT 토큰 문자열, 없으면 null
+     * @apiNote HTTP 요청에서 JWT 토큰을 추출하는 메서드
      */
     private String parseJwt(HttpServletRequest request) {
         // 1. Authorization 헤더에서 JWT 토큰을 추출
-        String headerAuth = request.getHeader("Authorization");
+        String bearerToken = request.getHeader("Authorization");
 
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            // 2. "Bearer " 접두사를 제거하고 JWT 토큰 반환
-            return headerAuth.substring(7);
+        // 2. "Bearer " 접두사를 제거하고 JWT 토큰 반환
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
         }
-
         return null;
     }
 

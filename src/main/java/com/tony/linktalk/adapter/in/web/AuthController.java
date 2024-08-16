@@ -35,11 +35,11 @@ public class AuthController {
      * @apiNote 로그인 요청을 받아 JWT 토큰을 발급합니다.
      */
     @PostMapping("/signIn")
-    public ResponseEntity<ApiResponse<JwtResponseDto>> signInAndMakeJwt(
+    public ResponseEntity<ApiResponse<JwtResponseDto>> signInAndCreateJwt(
             @RequestBody SignInRequestDto signInRequestDTO
     ) {
         SignInCommand signInCommand = SignInCommand.of(signInRequestDTO);
-        JwtResponseDto responseDTO = authUseCase.signInAndPublishJwt(signInCommand);
+        JwtResponseDto responseDTO = authUseCase.signInAndCreateJwt(signInCommand);
 
         return ResponseEntity.ok(ApiResponse.success(responseDTO));
     }

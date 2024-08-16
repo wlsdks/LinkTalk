@@ -13,7 +13,7 @@ import com.tony.linktalk.application.command.auth.SignUpCommand;
  */
 public interface AuthUseCase {
 
-    JwtResponseDto signInAndPublishJwt(SignInCommand signInCommand);
+    JwtResponseDto signInAndCreateJwt(SignInCommand signInCommand);
 
     MemberResponseDto signUp(SignUpCommand signUpCommand);
 
