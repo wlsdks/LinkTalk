@@ -16,7 +16,7 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 public class WebSocketConfig implements WebSocketConfigurer {
 
     private final ChatWebSocketHandler chatWebSocketHandler;
-
+    private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
 
     /**
      * @param registry WebSocketHandlerRegistry
@@ -27,9 +27,12 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(chatWebSocketHandler, "/ws/chat")
-                .addInterceptors(new HttpSessionHandshakeInterceptor())
-                .setAllowedOrigins("*"); // 클라이언트에서 웹 소켓 서버에 요청하는 모든 요청을 수락, CORS 방지
-        // todo: 실제 서비스에서는 "*"으로 하면 안된다. 스프링에서 웹소켓을 사용할 때, same-origin만 허용하는 것이 기본정책이다.
+                .addInterceptors(
+                        new HttpSessionHandshakeInterceptor(), // HttpSession 정보를 WebSocket 세션에 복사
+                        jwtHandshakeInterceptor                // JWT 토큰을 검증하는 인터셉터 추가
+                )
+                .setAllowedOrigins("*");                       // 이 설정은 개발 중에만 사용하고, 배포 시에는 보안을 강화해야 합니다.
+//                .setAllowedOrigins("https://your-allowed-origin.com"); // 실제 서비스에서 허용할 도메인만 설정
     }
 
 }

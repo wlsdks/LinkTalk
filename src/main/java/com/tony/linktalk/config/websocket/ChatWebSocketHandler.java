@@ -1,5 +1,6 @@
 package com.tony.linktalk.config.websocket;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tony.linktalk.adapter.in.web.dto.response.ResponseChatMessageDto;
 import com.tony.linktalk.application.command.CreateChatMessageCommand;
@@ -53,28 +54,18 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      */
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        // 수신한 메시지를 payload로부터 추출
-        String payload = message.getPayload();
+        try {
+            String payload = saveChatMessage(message);
+            String nickname = (String) session.getAttributes().get("nickname");
+            Long chatRoomId = getChatRoomIdFromSession(session);
 
-        // ChatMessageDto로 변환
-        ResponseChatMessageDto responseChatMessageDto = objectMapper.readValue(payload, ResponseChatMessageDto.class);
-
-        // DTO를 Command로 변환
-        CreateChatMessageCommand command = CreateChatMessageCommand.of(responseChatMessageDto);
-
-        // 메시지를 DB에 저장
-        createChatMessageService.processChatMessage(command);
-
-        // 사용자의 닉네임을 세션에서 가져와서 메시지에 포함
-        String nickname = (String) session.getAttributes().get("nickname");
-
-        // 채팅방 ID를 세션에서 가져옴
-        Long chatRoomId = getChatRoomIdFromSession(session);
-
-        // 채팅방에 메시지를 브로드캐스트
-        broadcastToRoom(chatRoomId, payload + " from " + nickname);
+            broadcastToRoom(chatRoomId, payload + " from " + nickname);
+        } catch (Exception e) {
+            // 예외 처리 및 클라이언트에게 에러 메시지 전송
+            session.sendMessage(new TextMessage("Error processing message: " + e.getMessage()));
+            e.printStackTrace();
+        }
     }
-
 
     /**
      * @param session   WebSocketSession
@@ -99,6 +90,22 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         // WebSocket 세션이 종료되면 세션을 리스트에서 제거
         sessions.remove(session);
+    }
+
+
+    /**
+     * @param message TextMessage 메시지
+     * @return 저장된 채팅 메시지
+     * @throws JsonProcessingException JsonProcessingException
+     * @apiNote 채팅 메시지를 받아서 변환한 다음 저장한다.
+     */
+    private String saveChatMessage(TextMessage message) throws JsonProcessingException {
+        String payload = message.getPayload();
+        ResponseChatMessageDto responseChatMessageDto = objectMapper.readValue(payload, ResponseChatMessageDto.class);
+
+        CreateChatMessageCommand command = CreateChatMessageCommand.of(responseChatMessageDto);
+        createChatMessageService.processChatMessage(command);
+        return payload;
     }
 
 
