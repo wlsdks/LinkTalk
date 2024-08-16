@@ -16,6 +16,8 @@ import com.tony.linktalk.config.security.http.user.UserDetailsImpl;
 import com.tony.linktalk.domain.Jwt;
 import com.tony.linktalk.domain.Member;
 import com.tony.linktalk.domain.RefreshToken;
+import com.tony.linktalk.exception.ErrorCode;
+import com.tony.linktalk.exception.LinkTalkException;
 import com.tony.linktalk.mapper.JwtMapper;
 import com.tony.linktalk.mapper.MemberMapper;
 import com.tony.linktalk.util.JwtTokenProvider;
@@ -115,23 +117,20 @@ public class AuthService implements AuthUseCase {
         // 1. 로그아웃 요청 도메인을 생성
         Member member = memberMapper.commandToDomain(signOutCommand);
 
-        // 2. 로그아웃 처리
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            // 2-1. SecurityContext에서 인증 정보를 가져와서 이메일을 추출
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            String email = userDetails.getEmail();
-            member.changeEmail(email);
+        // 2. SecurityContext에서 인증 정보를 가져와서 이메일을 추출
+        UserDetailsImpl userDetails = getUserDetails();
 
-            // 2-2. 회원 조회 후 RefreshToken 삭제
+        // 3. 회원 정보를 검증한 후 RefreshToken 삭제 (검증 실패시 도메인 비즈니스에서 예외 처리)
+        if (member.isSameEmail(userDetails.getEmail())) {
+            // 회원 조회 후 RefreshToken 삭제
             Member findMember = findMemberPort.findMemberByEmail(member.getEmail());
             deleteRefreshTokenPort.deleteRefreshToken(findMember);
 
-            // 2-3. SecurityContext에서 인증 정보 삭제
+            // SecurityContext에서 인증 정보 삭제
             SecurityContextHolder.clearContext();
         }
 
-        // 3. 로그아웃한 회원 ID 반환 (예외가 없으면 로그아웃 성공이라 이 객체의 id를 반환)
+        // 4. 로그아웃한 회원 ID 반환
         return member.getId();
     }
 
@@ -163,6 +162,21 @@ public class AuthService implements AuthUseCase {
 
         // 6. 갱신된 JWT 토큰 정보를 DTO에 담아 반환
         return JwtResponseDto.of(newAccessToken, findRefreshToken.getToken());
+    }
+
+
+    /**
+     * @return UserDetailsImpl 객체
+     * @apiNote SecurityContext에서 인증 정보를 가져와서 UserDetailsImpl 객체를 반환하는 메서드
+     */
+    private UserDetailsImpl getUserDetails() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null) {
+            throw new LinkTalkException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+
+        return (UserDetailsImpl) authentication.getPrincipal();
     }
 
 }

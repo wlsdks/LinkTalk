@@ -34,6 +34,14 @@ public enum ErrorCode {
     AUTHENTICATION_NOT_FOUND("AUTH001", "Authentication not found"),
 
 
+    // member errors
+    MEMBER_EMAIL_NOT_MATCH("MEM008", "Member email not match"),
+    MEMBER_INNER_EMAIL_NOT_FOUND("MEM009", "Member inner email not found"),
+    MEMBER_EMAIL_PARAM_NOT_FOUND("MEM010", "Member email param not found"),
+
+
+
+
     ;
 
     private final String code;
