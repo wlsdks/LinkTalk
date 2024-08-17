@@ -86,9 +86,9 @@ public class AuthService implements AuthUseCase {
 
 
     /**
+     * @param signUpCommand 회원가입 요청 도메인
      * @return 가입한 회원의 이메일
-     * @Param signUpCommand 회원가입 요청 도메인
-     * @apiNote 회원 생성 + (이벤트 발행)
+     * @apiNote 회원 생성
      */
     @Transactional
     @Override
@@ -109,7 +109,7 @@ public class AuthService implements AuthUseCase {
 
     /**
      * @param signOutCommand 로그아웃 요청 도메인
-     * @apiNote 로그아웃 + JWT 삭제 + 활동 로그 저장 event 발행
+     * @apiNote 로그아웃 + JWT 삭제
      */
     @Transactional
     @Override
