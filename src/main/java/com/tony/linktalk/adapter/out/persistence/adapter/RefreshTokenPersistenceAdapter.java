@@ -13,15 +13,15 @@ import com.tony.linktalk.exception.ErrorCode;
 import com.tony.linktalk.exception.LinkTalkException;
 import com.tony.linktalk.mapper.MemberMapper;
 import com.tony.linktalk.mapper.RefreshTokenMapper;
+import com.tony.linktalk.util.custom.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 /**
  * 리프레시 토큰 관련 비즈니스 로직을 처리하는 어댑터 클래스
  */
 @RequiredArgsConstructor
-@Component
+@PersistenceAdapter
 public class RefreshTokenPersistenceAdapter implements CreateRefreshTokenPort, FindRefreshTokenPort, DeleteRefreshTokenPort, UpdateRefreshTokenPort {
 
     private final RefreshTokenRepository refreshTokenRepository;

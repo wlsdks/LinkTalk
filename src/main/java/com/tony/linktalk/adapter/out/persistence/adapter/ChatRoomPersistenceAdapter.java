@@ -6,13 +6,13 @@ import com.tony.linktalk.application.port.out.chatroom.CreateChatRoomPort;
 import com.tony.linktalk.application.port.out.chatroom.FindChatRoomPort;
 import com.tony.linktalk.domain.ChatRoom;
 import com.tony.linktalk.mapper.ChatRoomMapper;
+import com.tony.linktalk.util.custom.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @RequiredArgsConstructor
-@Component
+@PersistenceAdapter
 public class ChatRoomPersistenceAdapter implements FindChatRoomPort, CreateChatRoomPort {
 
     private final ChatRoomRepository chatRoomRepository;

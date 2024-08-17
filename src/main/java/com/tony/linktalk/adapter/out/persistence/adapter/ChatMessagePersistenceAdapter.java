@@ -6,16 +6,13 @@ import com.tony.linktalk.application.port.out.chat.CreateChatMessagePort;
 import com.tony.linktalk.application.port.out.chat.FindChatMessagePort;
 import com.tony.linktalk.domain.ChatMessage;
 import com.tony.linktalk.mapper.ChatMessageMapper;
+import com.tony.linktalk.util.custom.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
-
-import java.util.List;
 
 @RequiredArgsConstructor
-@Component
+@PersistenceAdapter
 public class ChatMessagePersistenceAdapter implements CreateChatMessagePort, FindChatMessagePort {
 
     private final ChatMessageRepository chatMessageRepository;

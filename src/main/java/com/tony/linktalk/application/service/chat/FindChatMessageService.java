@@ -6,13 +6,13 @@ import com.tony.linktalk.application.port.in.chat.message.FindChatMessageUseCase
 import com.tony.linktalk.application.port.out.chat.FindChatMessagePort;
 import com.tony.linktalk.domain.ChatMessage;
 import com.tony.linktalk.mapper.ChatMessageMapper;
+import com.tony.linktalk.util.custom.UseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
-@Service
+@UseCase
 public class FindChatMessageService implements FindChatMessageUseCase {
 
     private final FindChatMessagePort findChatMessagePort;

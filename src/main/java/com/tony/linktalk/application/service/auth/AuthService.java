@@ -21,12 +21,12 @@ import com.tony.linktalk.exception.LinkTalkException;
 import com.tony.linktalk.mapper.JwtMapper;
 import com.tony.linktalk.mapper.MemberMapper;
 import com.tony.linktalk.util.JwtTokenProvider;
+import com.tony.linktalk.util.custom.UseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Service
+@UseCase
 public class AuthService implements AuthUseCase {
 
     private final CreateMemberPort createMemberPort;

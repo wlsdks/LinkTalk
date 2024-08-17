@@ -6,13 +6,13 @@ import com.tony.linktalk.application.port.in.chat.room.FindChatRoomUseCase;
 import com.tony.linktalk.application.port.out.chatroom.FindChatRoomPort;
 import com.tony.linktalk.domain.ChatRoom;
 import com.tony.linktalk.mapper.ChatRoomMapper;
+import com.tony.linktalk.util.custom.UseCase;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @RequiredArgsConstructor
-@Service
+@UseCase
 public class FindChatRoomService implements FindChatRoomUseCase {
 
     private final FindChatRoomPort findChatRoomPort;

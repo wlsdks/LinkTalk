@@ -5,11 +5,11 @@ import com.tony.linktalk.application.command.chat.message.CreateChatMessageComma
 import com.tony.linktalk.application.port.out.chat.CreateChatMessagePort;
 import com.tony.linktalk.domain.ChatMessage;
 import com.tony.linktalk.mapper.ChatMessageMapper;
+import com.tony.linktalk.util.custom.UseCase;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
-@Service
+@UseCase
 public class CreateChatMessageService {
 
     private final CreateChatMessagePort createChatMessagePort;

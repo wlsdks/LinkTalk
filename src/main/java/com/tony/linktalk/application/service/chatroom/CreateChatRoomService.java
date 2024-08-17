@@ -6,11 +6,11 @@ import com.tony.linktalk.application.port.in.chat.room.CreateChatRoomUseCase;
 import com.tony.linktalk.application.port.out.chatroom.CreateChatRoomPort;
 import com.tony.linktalk.domain.ChatRoom;
 import com.tony.linktalk.mapper.ChatRoomMapper;
+import com.tony.linktalk.util.custom.UseCase;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
-@Service
+@UseCase
 public class CreateChatRoomService implements CreateChatRoomUseCase {
 
     private final CreateChatRoomPort createChatRoomPort;

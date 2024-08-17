@@ -10,14 +10,14 @@ import com.tony.linktalk.domain.Member;
 import com.tony.linktalk.exception.ErrorCode;
 import com.tony.linktalk.exception.LinkTalkException;
 import com.tony.linktalk.mapper.MemberMapper;
+import com.tony.linktalk.util.custom.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 /**
  * MemberAdapter
  */
 @RequiredArgsConstructor
-@Component
+@PersistenceAdapter
 public class MemberPersistenceAdapter implements CreateMemberPort, FindMemberPort, DeleteMemberPort, UpdateMemberPort {
 
     private final MemberRepository memberRepository;
