@@ -20,7 +20,7 @@ public class CreateChatMessageService {
      * @param createChatMessageCommand CreateChatMessageCommand
      * @apiNote 채팅 메시지를 처리하는 비즈니스 로직
      */
-    public void processChatMessage(CreateChatMessageCommand createChatMessageCommand) {
+    public void createChatMessage(CreateChatMessageCommand createChatMessageCommand) {
         // 1. command를 domain으로 변환
         ChatMessage chatMessage = chatMessageMapper.commandToDomain(createChatMessageCommand);
 

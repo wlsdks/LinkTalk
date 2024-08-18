@@ -55,10 +55,15 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         try {
-            String payload = saveChatMessage(message);
+            // 수신된 메시지를 추출하고 저장
+            String payload = message.getPayload();
+            saveChatMessage(payload);
+
+            // HandshakeInterceptor에서 설정한 속성들 가져오기
             String nickname = (String) session.getAttributes().get("nickname");
             Long chatRoomId = getChatRoomIdFromSession(session);
 
+            // 채팅 메시지를 브로드캐스트
             broadcastToRoom(chatRoomId, payload + " from " + nickname);
         } catch (Exception e) {
             // 예외 처리 및 클라이언트에게 에러 메시지 전송
@@ -94,18 +99,14 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
 
     /**
-     * @param message TextMessage 메시지
-     * @return 저장된 채팅 메시지
+     * @param payload 채팅 메시지
      * @throws JsonProcessingException JsonProcessingException
      * @apiNote 채팅 메시지를 받아서 변환한 다음 저장한다.
      */
-    private String saveChatMessage(TextMessage message) throws JsonProcessingException {
-        String payload = message.getPayload();
+    private void saveChatMessage(String payload) throws JsonProcessingException {
         ChatMessageResponseDto chatMessageResponseDto = objectMapper.readValue(payload, ChatMessageResponseDto.class);
-
         CreateChatMessageCommand command = CreateChatMessageCommand.of(chatMessageResponseDto);
-        createChatMessageService.processChatMessage(command);
-        return payload;
+        createChatMessageService.createChatMessage(command);
     }
 
 
