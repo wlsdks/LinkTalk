@@ -26,6 +26,9 @@ public class ChatRoomEntity {
     @JoinColumn(name = "sender_id")
     private Long senderId;
 
+    @Column(name = "room_type", nullable = false)
+    private String roomType; // 예: "PUBLIC", "PRIVATE"
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

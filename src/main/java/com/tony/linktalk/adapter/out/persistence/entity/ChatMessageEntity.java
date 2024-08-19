@@ -29,6 +29,12 @@ public class ChatMessageEntity {
     @Column(name = "content")
     private String content;
 
+    @Column(name = "status")
+    private String status; // 예: "SENT", "DELIVERED", "READ"
+
+    @Column(name = "message_type")
+    private String messageType; // 예: "TEXT", "IMAGE", "FILE"
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
