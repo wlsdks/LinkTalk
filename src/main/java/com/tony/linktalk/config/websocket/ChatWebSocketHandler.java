@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tony.linktalk.adapter.in.web.dto.response.chat.message.ChatMessageResponseDto;
 import com.tony.linktalk.application.command.chat.message.CreateChatMessageCommand;
-import com.tony.linktalk.application.service.chat.CreateChatMessageService;
+import com.tony.linktalk.application.port.in.chat.message.CreateChatMessageUseCase;
 import com.tony.linktalk.config.websocket.dto.ChatWebSocketMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     // 현재 연결된 모든 WebSocket 세션을 저장합니다. 이 리스트는 스레드 safe 하게 여러 클라이언트 세션을 저장할 수 있다.
     private final List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final CreateChatMessageService createChatMessageService;
+    private final CreateChatMessageUseCase createChatMessageUseCase;
 
 
     /**
@@ -185,7 +185,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         // 메시지 저장 로직 호출
         // todo: 이걸 Kafka로 처리해 보자
-        createChatMessageService.createChatMessage(command);
+        createChatMessageUseCase.createChatMessage(command);
     }
 
 
