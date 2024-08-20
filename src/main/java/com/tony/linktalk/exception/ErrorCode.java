@@ -40,7 +40,10 @@ public enum ErrorCode {
     MEMBER_EMAIL_PARAM_NOT_FOUND("MEM010", "Member email param not found"),
 
 
-
+    // file errors
+    FILE_UPLOAD_ERROR("FILE001", "File upload error"),
+    FILE_DOWNLOAD_ERROR("FILE002", "File download error"),
+    FILE_NOT_FOUND("FILE003", "File not found"),
 
     ;
 
