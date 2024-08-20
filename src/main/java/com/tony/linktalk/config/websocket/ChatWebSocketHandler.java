@@ -7,6 +7,7 @@ import com.tony.linktalk.application.command.chat.message.CreateChatMessageComma
 import com.tony.linktalk.application.service.chat.CreateChatMessageService;
 import com.tony.linktalk.config.websocket.dto.ChatWebSocketMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -19,6 +20,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * WebSocketHandler를 상속받아 WebSocket 메시지를 처리하는 핸들러
  */
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class ChatWebSocketHandler extends TextWebSocketHandler {
@@ -39,11 +41,12 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         // 새로운 WebSocket 세션이 연결되면 세션을 리스트에 추가
         sessions.add(session);
 
-        // 세션에서 채팅방 ID를 추출하거나 세션 맵에 저장
-        Long chatRoomId = getChatRoomIdFromSession(session);
+        // 세션에서 채팅방 ID와 수신자 ID를 추출
+        Long chatRoomId = extractChatRoomIdFrom(session);
+        Long receiverId = extractReceiverIdFrom(session);
 
         // 채팅방 입장 메시지 브로드캐스트
-        broadcastToRoom(chatRoomId, "사용자가 채팅방에 입장했습니다.");
+        sendMessageToReceiver(chatRoomId, "사용자가 채팅방에 입장했습니다.", receiverId);
     }
 
 
@@ -51,11 +54,12 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      * @param session WebSocketSession
      * @param message TextMessage
      * @throws Exception Exception
-     * @apiNote 메시지를 수신하면 이를 ChatMessageDto로 변환하고 데이터베이스에 저장한 후, 연결된 모든 세션에게 메시지를 브로드캐스트한다.
+     * @apiNote 메시지를 수신하면 이를 ChatMessageDto로 변환하고 데이터베이스에 저장한 후, 연결된 수신자에게만 메시지를 브로드캐스트한다.
      * client 전송 예시
      * {
      * "messageType": "TEXT",
      * "senderId": 123,
+     * "receiverId": 456,
      * "content": "Hello, this is a test message"
      * }
      */
@@ -67,32 +71,34 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
             // HandshakeInterceptor에서 설정한 속성들 가져오기
             String nickname = (String) session.getAttributes().get("nickname");
-            Long chatRoomId = getChatRoomIdFromSession(session);
+            Long chatRoomId = extractChatRoomIdFrom(session);
+            Long receiverId = extractReceiverIdFrom(session);
 
-            // ChatWebSocketMessage에 채팅방 ID 설정
+            // ChatWebSocketMessage에 채팅방 ID, 수신자 ID 설정
             chatWebSocketMessage.changeChatRoomId(chatRoomId);
+            chatWebSocketMessage.changeReceiverId(receiverId);
 
             // 메시지 타입에 따른 처리
-            String broadcastMessage;
-            if ("TEXT".equals(chatWebSocketMessage.getMessageType())) {
-                broadcastMessage = chatWebSocketMessage.getContent() + " from " + nickname;
-            } else if ("FILE".equals(chatWebSocketMessage.getMessageType())) {
-                broadcastMessage = "파일이 전송되었습니다: " + chatWebSocketMessage.getContent();
-            } else {
-                broadcastMessage = "알 수 없는 메시지 타입입니다.";
-            }
+            String broadcastMessage = switch (chatWebSocketMessage.getMessageType()) {
+                case "TEXT" -> chatWebSocketMessage.getContent() + " from " + nickname;
+                case "FILE" -> "파일이 전송되었습니다: " + chatWebSocketMessage.getContent();
+                default -> "알 수 없는 메시지 타입입니다.";
+            };
 
             // 메시지를 DB에 저장
             saveChatMessage(chatWebSocketMessage);
 
-            // 채팅 메시지를 브로드캐스트
-            broadcastToRoom(chatRoomId, broadcastMessage);
+            // DM인지 확인하여 수신자에게만 전송
+            sendMessageToReceiver(chatRoomId, broadcastMessage, chatWebSocketMessage.getReceiverId());
+            log.info("User {} in chat room {}: {}", nickname, chatRoomId, broadcastMessage);
         } catch (Exception e) {
-            // 예외 처리 및 클라이언트에게 에러 메시지 전송
-            session.sendMessage(new TextMessage("Error processing message: " + e.getMessage()));
-            e.printStackTrace();
+            // 로깅
+            log.error("Error processing WebSocket message", e);
+            // 클라이언트에 전송할 메시지 (일반적인 오류 메시지)
+            session.sendMessage(new TextMessage("An error occurred while processing the message."));
         }
     }
+
 
     /**
      * @param session   WebSocketSession
@@ -121,11 +127,56 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
 
     /**
+     * @param chatRoomId 채팅방 ID
+     * @param message    메시지
+     * @param receiverId 수신자 ID
+     * @throws Exception Exception
+     * @apiNote 채팅방에 메시지를 브로드캐스트합니다.
+     */
+    public void sendMessageToReceiver(Long chatRoomId, String message, Long receiverId) throws Exception {
+        for (WebSocketSession session : sessions) {
+            Long sessionChatRoomId = extractChatRoomIdFrom(session);
+            Long sessionUserId = (Long) session.getAttributes().get("userId"); // 세션의 사용자 ID를 가져옴
+
+            // 채팅방 ID와 수신자 ID가 일치하는 경우에만 상대방에게 메시지 전송
+            if (isChatRoomIdEqual(sessionChatRoomId, chatRoomId) && isReceiverIdEqual(sessionUserId, receiverId)) {
+                if (session.isOpen()) {
+                    // 메시지 전송
+                    session.sendMessage(new TextMessage(message));
+                }
+            }
+        }
+    }
+
+
+    /**
+     * @param sessionChatRoomId 세션의 채팅방 ID
+     * @param chatRoomId        채팅방 ID
+     * @return 채팅방 ID가 일치하는지 여부
+     * @apiNote 채팅방 ID가 일치하는지 확인합니다.
+     */
+    private boolean isChatRoomIdEqual(Long sessionChatRoomId, Long chatRoomId) {
+        return sessionChatRoomId != null && sessionChatRoomId.equals(chatRoomId);
+    }
+
+
+    /**
+     * @param sessionUserId 세션의 사용자 ID
+     * @param receiverId    수신자 ID
+     * @return 수신자 ID가 일치하는지 여부
+     * @apiNote 수신자 ID가 일치하는지 확인합니다.
+     */
+    private boolean isReceiverIdEqual(Long sessionUserId, Long receiverId) {
+        return sessionUserId != null && sessionUserId.equals(receiverId);
+    }
+
+
+    /**
      * @param chatWebSocketMessage ChatWebSocketMessage
      * @throws JsonProcessingException JsonProcessingException
      * @apiNote 채팅 메시지를 받아서 변환한 다음 저장한다.
      */
-    private void saveChatMessage(ChatWebSocketMessage chatWebSocketMessage) throws JsonProcessingException {
+    private void saveChatMessage(ChatWebSocketMessage chatWebSocketMessage) {
         // ChatMessageResponseDto로 변환
         ChatMessageResponseDto chatMessageResponseDto = ChatMessageResponseDto.of(chatWebSocketMessage);
 
@@ -133,6 +184,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         CreateChatMessageCommand command = CreateChatMessageCommand.of(chatMessageResponseDto);
 
         // 메시지 저장 로직 호출
+        // todo: 이걸 Kafka로 처리해 보자
         createChatMessageService.createChatMessage(command);
     }
 
@@ -143,28 +195,19 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      * @apiNote WebSocket 세션에서 채팅방 ID를 추출합니다.
      * 일반적으로 WebSocket 세션이 시작될 때 채팅방 ID를 클라이언트에서 전달받아 세션 속성에 저장하는 방식으로 구현할 수 있습니다.
      */
-    private Long getChatRoomIdFromSession(WebSocketSession session) {
+    private Long extractChatRoomIdFrom(WebSocketSession session) {
         // 세션의 속성에서 채팅방 ID를 가져옴 (클라이언트가 연결 시에 채팅방 ID를 전송했다고 가정)
         return (Long) session.getAttributes().get("chatRoomId");
     }
 
 
     /**
-     * @param chatRoomId 채팅방 ID
-     * @param message    메시지
-     * @throws Exception Exception
-     * @apiNote 이 메서드는 특정 채팅방에 속한 모든 사용자에게 메시지를 전송하는 역할을 한다.
+     * @param session WebSocketSession
+     * @return 수신자 ID
+     * @apiNote 세션에서 수신자 ID를 가져옵니다. (jwtHandshakeInterceptor에서 설정한 속성)
      */
-    public void broadcastToRoom(Long chatRoomId, String message) throws Exception {
-        for (WebSocketSession session : sessions) {
-            // 세션에서 채팅방 ID를 가져와서 동일한 채팅방에 속한 사용자에게만 메시지를 전송
-            Long sessionChatRoomId = getChatRoomIdFromSession(session);
-            if (sessionChatRoomId != null && sessionChatRoomId.equals(chatRoomId)) {
-                if (session.isOpen()) {
-                    session.sendMessage(new TextMessage(message));
-                }
-            }
-        }
+    private static Long extractReceiverIdFrom(WebSocketSession session) {
+        return (Long) session.getAttributes().get("userId");
     }
 
 }

@@ -44,7 +44,8 @@ public class FileController {
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse<FileResponseDto>> uploadFile(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("chatRoomId") Long chatRoomId
+            @RequestParam("chatRoomId") Long chatRoomId,
+            @RequestParam("userId") Long userId // todo: 이거 가능한건지 확인
     ) throws Exception {
         // 파일 업로드 처리
         CreateFileCommand command = CreateFileCommand.of(file);
@@ -52,7 +53,7 @@ public class FileController {
 
         // 업로드된 파일 URL을 채팅방에 반환 (파일 업로드 후 해당 채팅방에 속한 모든 사용자에게 메시지를 전송할 수 있다.)
         String fileUrlMessage = "File uploaded successfully. URL: " + responseDto.getUrl();
-        chatWebSocketHandler.broadcastToRoom(chatRoomId, fileUrlMessage);
+        chatWebSocketHandler.sendMessageToReceiver(chatRoomId, fileUrlMessage, userId);
 
         return ResponseEntity.ok(ApiResponse.success(responseDto));
     }
