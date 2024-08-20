@@ -21,7 +21,10 @@ public class FileEntity extends BaseEntity {
     private Long id;
 
     @Column(name = "url", nullable = false)
-    private String url;
+    private String url; // 파일에 접근할 수 있는 URL
+
+    @Column(name = "path", nullable = false)
+    private String path; // 파일이 저장된 서버의 실제 경로
 
     @Column(name = "file_type", nullable = false)
     private String fileType;
