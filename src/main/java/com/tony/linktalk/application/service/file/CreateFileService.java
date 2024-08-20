@@ -55,6 +55,9 @@ public class CreateFileService implements CreateFileUseCase {
         String fileType = multipartFile.getContentType();
         long fileSize = multipartFile.getSize();
 
+        // 이미지 파일만 저장가능 (추후 고도화)
+        validateImageFile(multipartFile);
+
         // 실제 파일 저장 ( 파일 저장 경로: uploadDir + fileName )
         try {
             multipartFile.transferTo(Paths.get(filePath).toFile());
@@ -91,6 +94,21 @@ public class CreateFileService implements CreateFileUseCase {
      */
     private String getExtension(String filename) {
         return filename.substring(filename.lastIndexOf(".") + 1);
+    }
+
+
+    /**
+     * @param file MultipartFile
+     * @apiNote 이미지 파일인지 검증합니다.
+     */
+    private void validateImageFile(MultipartFile file) {
+        String fileType = file.getContentType();
+
+        // 파일 타입이 image가 아니면 예외 발생
+        assert fileType != null;
+        if (!fileType.startsWith("image/")) {
+            throw new LinkTalkException(ErrorCode.INVALID_FILE_TYPE);
+        }
     }
 
 }

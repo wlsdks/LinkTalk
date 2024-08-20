@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tony.linktalk.adapter.in.web.dto.response.chat.message.ChatMessageResponseDto;
 import com.tony.linktalk.application.command.chat.message.CreateChatMessageCommand;
 import com.tony.linktalk.application.service.chat.CreateChatMessageService;
+import com.tony.linktalk.config.websocket.dto.ChatWebSocketMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -51,20 +52,41 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      * @param message TextMessage
      * @throws Exception Exception
      * @apiNote 메시지를 수신하면 이를 ChatMessageDto로 변환하고 데이터베이스에 저장한 후, 연결된 모든 세션에게 메시지를 브로드캐스트한다.
+     * client 전송 예시
+     * {
+     * "messageType": "TEXT",
+     * "senderId": 123,
+     * "content": "Hello, this is a test message"
+     * }
      */
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         try {
-            // 수신된 메시지를 추출하고 저장
-            String payload = message.getPayload();
-            saveChatMessage(payload);
+            // 수신된 메시지를 ChatWebSocketMessage 객체로 변환
+            ChatWebSocketMessage chatWebSocketMessage = objectMapper.readValue(message.getPayload(), ChatWebSocketMessage.class);
 
             // HandshakeInterceptor에서 설정한 속성들 가져오기
             String nickname = (String) session.getAttributes().get("nickname");
             Long chatRoomId = getChatRoomIdFromSession(session);
 
+            // ChatWebSocketMessage에 채팅방 ID 설정
+            chatWebSocketMessage.changeChatRoomId(chatRoomId);
+
+            // 메시지 타입에 따른 처리
+            String broadcastMessage;
+            if ("TEXT".equals(chatWebSocketMessage.getMessageType())) {
+                broadcastMessage = chatWebSocketMessage.getContent() + " from " + nickname;
+            } else if ("FILE".equals(chatWebSocketMessage.getMessageType())) {
+                broadcastMessage = "파일이 전송되었습니다: " + chatWebSocketMessage.getContent();
+            } else {
+                broadcastMessage = "알 수 없는 메시지 타입입니다.";
+            }
+
+            // 메시지를 DB에 저장
+            saveChatMessage(chatWebSocketMessage);
+
             // 채팅 메시지를 브로드캐스트
-            broadcastToRoom(chatRoomId, payload + " from " + nickname);
+            broadcastToRoom(chatRoomId, broadcastMessage);
         } catch (Exception e) {
             // 예외 처리 및 클라이언트에게 에러 메시지 전송
             session.sendMessage(new TextMessage("Error processing message: " + e.getMessage()));
@@ -99,13 +121,18 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
 
     /**
-     * @param payload 채팅 메시지
+     * @param chatWebSocketMessage ChatWebSocketMessage
      * @throws JsonProcessingException JsonProcessingException
      * @apiNote 채팅 메시지를 받아서 변환한 다음 저장한다.
      */
-    private void saveChatMessage(String payload) throws JsonProcessingException {
-        ChatMessageResponseDto chatMessageResponseDto = objectMapper.readValue(payload, ChatMessageResponseDto.class);
+    private void saveChatMessage(ChatWebSocketMessage chatWebSocketMessage) throws JsonProcessingException {
+        // ChatMessageResponseDto로 변환
+        ChatMessageResponseDto chatMessageResponseDto = ChatMessageResponseDto.of(chatWebSocketMessage);
+
+        // CreateChatMessageCommand로 변환
         CreateChatMessageCommand command = CreateChatMessageCommand.of(chatMessageResponseDto);
+
+        // 메시지 저장 로직 호출
         createChatMessageService.createChatMessage(command);
     }
 

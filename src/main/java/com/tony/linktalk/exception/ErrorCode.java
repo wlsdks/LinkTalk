@@ -44,6 +44,8 @@ public enum ErrorCode {
     FILE_UPLOAD_ERROR("FILE001", "File upload error"),
     FILE_DOWNLOAD_ERROR("FILE002", "File download error"),
     FILE_NOT_FOUND("FILE003", "File not found"),
+    INVALID_FILE_TYPE("FILE004", "Invalid file type"),
+
 
     ;
 
