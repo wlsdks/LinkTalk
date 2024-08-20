@@ -128,7 +128,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      * @throws Exception Exception
      * @apiNote 이 메서드는 특정 채팅방에 속한 모든 사용자에게 메시지를 전송하는 역할을 한다.
      */
-    private void broadcastToRoom(Long chatRoomId, String message) throws Exception {
+    public void broadcastToRoom(Long chatRoomId, String message) throws Exception {
         for (WebSocketSession session : sessions) {
             // 세션에서 채팅방 ID를 가져와서 동일한 채팅방에 속한 사용자에게만 메시지를 전송
             Long sessionChatRoomId = getChatRoomIdFromSession(session);
