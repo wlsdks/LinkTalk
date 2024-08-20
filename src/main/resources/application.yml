@@ -39,3 +39,7 @@ spring:
   p6spy:
     filter:
       include: .*
+
+file:
+  upload-dir: /Users/your-username/Downloads # 파일이 저장될 경로
+  url-prefix: http://localhost:8080/files # 파일 접근을 위한 URL prefix
