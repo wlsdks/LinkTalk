@@ -27,7 +27,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     // 현재 연결된 모든 WebSocket 세션을 저장합니다. 이 리스트는 스레드 safe 하게 여러 클라이언트 세션을 저장할 수 있다.
     private final List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
     private final CreateChatMessageUseCase createChatMessageUseCase;
 
 
