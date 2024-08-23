@@ -10,8 +10,10 @@ import com.tony.linktalk.util.custom.UseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @UseCase
 public class FindChatMessageService implements FindChatMessageUseCase {
 
