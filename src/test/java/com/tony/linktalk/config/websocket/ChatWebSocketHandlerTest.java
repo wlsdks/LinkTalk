@@ -97,8 +97,11 @@ class ChatWebSocketHandlerTest {
         ));
         session.sendMessage(new TextMessage(jsonMessage));
 
-        // 수신된 메시지 확인
-        latch.await(3, TimeUnit.SECONDS);
+        // 수신된 메시지 확인 (카운트다운이 성공적으로 완료되었는지 확인하고, 그렇지 않은 경우 예외를 던져 오류를 처리합니다.)
+        boolean awaitSuccess = latch.await(3, TimeUnit.SECONDS);
+        if (!awaitSuccess) {
+            throw new IllegalStateException("Latch countdown timed out before all messages were received.");
+        }
 
         // 첫 번째 메시지는 입장 메시지일 수 있음
         assertEquals("사용자가 채팅방에 입장했습니다.", receivedMessages.get(0));
