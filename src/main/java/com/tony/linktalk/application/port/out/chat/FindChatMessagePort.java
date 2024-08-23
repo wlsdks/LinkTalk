@@ -10,4 +10,6 @@ public interface FindChatMessagePort {
 
     Page<ChatMessage> findAllMessagesByRoomId(Long roomId, Pageable pageable);
 
+    ChatMessage findChatMessageById(Long chatMessageId);
+
 }
