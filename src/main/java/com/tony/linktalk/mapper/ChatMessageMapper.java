@@ -17,6 +17,8 @@ import java.util.List;
 )
 public interface ChatMessageMapper {
 
+    @Mapping(target = "chatRoom.chatRoomId", source = "chatRoomId")
+    @Mapping(target = "sender.id", source = "senderId")
     ChatMessage commandToDomain(CreateChatMessageCommand createChatMessageCommand);
 
     @Mapping(target = "chatRoomId", source = "chatRoom.chatRoomId")
