@@ -6,6 +6,7 @@ import com.tony.linktalk.adapter.in.web.dto.request.chat.message.ChatMessageRequ
 import com.tony.linktalk.application.command.chat.message.CreateChatMessageCommand;
 import com.tony.linktalk.application.port.in.chat.message.CreateChatMessageUseCase;
 import com.tony.linktalk.config.websocket.dto.ChatWebSocketMessage;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     // 현재 연결된 모든 WebSocket 세션을 저장합니다. 이 리스트는 스레드 safe 하게 여러 클라이언트 세션을 저장할 수 있다.
+    @Getter
     private final List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
     private final ObjectMapper objectMapper;
     private final CreateChatMessageUseCase createChatMessageUseCase;
@@ -68,7 +70,17 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         try {
             // 수신된 메시지를 ChatWebSocketMessage 객체로 변환
             String payload = message.getPayload();
-            ChatWebSocketMessage chatWebSocketMessage = ChatWebSocketMessage.of(payload);
+            ChatWebSocketMessage chatWebSocketMessage;
+
+            try {
+                // 여기서 메시지를 파싱하며 잘못된 형식일 경우 예외를 발생시킴
+                chatWebSocketMessage = objectMapper.readValue(payload, ChatWebSocketMessage.class);
+            } catch (Exception e) {
+                // 메시지 형식이 올바르지 않으면 예외를 처리하고 클라이언트에 오류 메시지 전송
+                log.error("Invalid message format: {}", payload, e);
+                session.sendMessage(new TextMessage("An error occurred while processing the message."));
+                return; // 더 이상 진행하지 않도록 함
+            }
 
             // HandshakeInterceptor에서 설정한 속성들 가져오기
             String nickname = (String) session.getAttributes().get("nickname");
@@ -140,6 +152,9 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             if (session.isOpen()) {
                 synchronized (session) { // 동기화 블록을 추가하여 동시 접근을 방지
                     try {
+                        // 서버가 sendMessageToReceiver 메서드를 통해 클라이언트로 응답을 전송할 때, 이 응답은 서버 자신이 아니라 클라이언트에게 전송
+                        // session.sendMessage(new TextMessage(message));가 서버에서 호출되더라도, 이 메시지는 서버 자신의 handleTextMessage 메서드로 다시 전송되지 않습니다.
+                        // 이 메시지는 클라이언트로 전송되며, 클라이언트가 이를 처리합니다. (재귀가 아닌 이유 참고)
                         session.sendMessage(new TextMessage(message));
                     } catch (IOException e) {
                         log.error("Error sending WebSocket message", e);
