@@ -15,6 +15,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -42,12 +43,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         // 새로운 WebSocket 세션이 연결되면 세션을 리스트에 추가
         sessions.add(session);
 
-        // 세션에서 채팅방 ID와 수신자 ID를 추출
-        Long chatRoomId = extractChatRoomIdFrom(session);
-        Long receiverId = extractReceiverIdFrom(session);
-
         // 채팅방 입장 메시지 브로드캐스트
-        sendMessageToReceiver(chatRoomId, "사용자가 채팅방에 입장했습니다.", receiverId);
+        sendMessageToReceiver("사용자가 채팅방에 입장했습니다.");
     }
 
 
@@ -68,7 +65,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         try {
             // 수신된 메시지를 ChatWebSocketMessage 객체로 변환
-            ChatWebSocketMessage chatWebSocketMessage = objectMapper.readValue(message.getPayload(), ChatWebSocketMessage.class);
+            String payload = message.getPayload();
+            ChatWebSocketMessage chatWebSocketMessage = ChatWebSocketMessage.of(payload);
 
             // HandshakeInterceptor에서 설정한 속성들 가져오기
             String nickname = (String) session.getAttributes().get("nickname");
@@ -93,7 +91,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             saveChatMessage(chatWebSocketMessage);
 
             // DM인지 확인하여 수신자에게만 전송
-            sendMessageToReceiver(chatRoomId, broadcastMessage, chatWebSocketMessage.getReceiverId());
+            sendMessageToReceiver(broadcastMessage);
             log.info("User {} in chat room {}: {}", nickname, chatRoomId, broadcastMessage);
         } catch (Exception e) {
             // 로깅
@@ -131,23 +129,24 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
 
     /**
-     * @param chatRoomId 채팅방 ID
-     * @param message    메시지
-     * @param receiverId 수신자 ID
+     * @param message 메시지
      * @throws Exception Exception
      * @apiNote 채팅방에 메시지를 브로드캐스트합니다.
      */
-    public void sendMessageToReceiver(Long chatRoomId, String message, Long receiverId) throws Exception {
+    public void sendMessageToReceiver(String message) throws Exception {
         for (WebSocketSession session : sessions) {
-            Long sessionChatRoomId = extractChatRoomIdFrom(session);
-            Long sessionUserId = (Long) session.getAttributes().get("memberId"); // 세션의 사용자 ID를 가져옴
+//            Long chatRoomId = extractChatRoomIdFrom(session);
+//            Long memberId = (Long) session.getAttributes().get("memberId"); // 세션의 사용자 ID를 가져옴
 
             // 채팅방 ID와 수신자 ID가 일치하는 경우에만 상대방에게 메시지 전송
-            if (isChatRoomIdEqual(sessionChatRoomId, chatRoomId) && isReceiverIdEqual(sessionUserId, receiverId)) {
-                if (session.isOpen()) {
-                    // 메시지 전송
+            if (session.isOpen()) {
+                try {
                     session.sendMessage(new TextMessage(message));
+                } catch (IOException e) {
+                    log.error("Error sending WebSocket message", e);
                 }
+            } else {
+                log.warn("Attempted to send message on a closed WebSocket session.");
             }
         }
     }
@@ -200,8 +199,12 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      * 일반적으로 WebSocket 세션이 시작될 때 채팅방 ID를 클라이언트에서 전달받아 세션 속성에 저장하는 방식으로 구현할 수 있습니다.
      */
     private Long extractChatRoomIdFrom(WebSocketSession session) {
-        // 세션의 속성에서 채팅방 ID를 가져옴 (클라이언트가 연결 시에 채팅방 ID를 전송했다고 가정)
-        return (Long) session.getAttributes().get("chatRoomId");
+        Object chatRoomId = session.getAttributes().get("chatRoomId");
+        if (chatRoomId instanceof Long) {
+            return (Long) chatRoomId;
+        }
+        log.error("Chat room ID is not of type Long");
+        return null; // 또는 적절한 기본값 설정
     }
 
 
@@ -211,7 +214,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      * @apiNote 세션에서 수신자 ID를 가져옵니다. (jwtHandshakeInterceptor에서 설정한 속성)
      */
     private static Long extractReceiverIdFrom(WebSocketSession session) {
-        return (Long) session.getAttributes().get("memberId");
+        Object memberId = session.getAttributes().get("memberId");
+        if (memberId instanceof Long) {
+            return (Long) memberId;
+        }
+        log.error("Receiver ID is not of type Long");
+        return null; // 또는 적절한 기본값 설정
     }
-
 }

@@ -53,7 +53,7 @@ public class FileController {
 
         // 업로드된 파일 URL을 채팅방에 반환 (파일 업로드 후 해당 채팅방에 속한 모든 사용자에게 메시지를 전송할 수 있다.)
         String fileUrlMessage = "File uploaded successfully. URL: " + responseDto.getUrl();
-        chatWebSocketHandler.sendMessageToReceiver(chatRoomId, fileUrlMessage, userId);
+        chatWebSocketHandler.sendMessageToReceiver(fileUrlMessage);
 
         return ResponseEntity.ok(ApiResponse.success(responseDto));
     }

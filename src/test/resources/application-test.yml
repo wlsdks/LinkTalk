@@ -3,13 +3,10 @@ server:
 
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=PostgreSQL
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-  h2:
-    console:
-      enabled: true
+    url: jdbc:postgresql://localhost:5432/linktalk
+    username: root
+    password: 1234
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
@@ -21,9 +18,6 @@ spring:
         use_sql_comments: true
         default_batch_fetch_size: 10
         highlight_sql: true
-        dialect: org.hibernate.dialect.H2Dialect
-    database-platform: org.hibernate.dialect.H2Dialect
-    database: h2
 
 jwt:
   jwtSecret: "aVeryLongSecretKeyThatIsAtLeast32BytesLongForSecurityInTest"

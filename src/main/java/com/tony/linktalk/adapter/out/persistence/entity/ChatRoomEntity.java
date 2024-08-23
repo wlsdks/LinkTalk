@@ -1,5 +1,6 @@
 package com.tony.linktalk.adapter.out.persistence.entity;
 
+import com.tony.linktalk.adapter.out.persistence.entity.constant.room.RoomType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,8 +27,9 @@ public class ChatRoomEntity {
     @JoinColumn(name = "sender_id")
     private Long senderId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "room_type", nullable = false)
-    private String roomType; // 예: "PUBLIC", "PRIVATE"
+    private RoomType roomType;
 
     @Override
     public boolean equals(Object o) {

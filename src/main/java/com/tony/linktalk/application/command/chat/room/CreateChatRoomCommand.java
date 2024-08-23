@@ -1,6 +1,7 @@
 package com.tony.linktalk.application.command.chat.room;
 
 import com.tony.linktalk.adapter.in.web.dto.request.chat.room.ChatRoomRequestDto;
+import com.tony.linktalk.adapter.out.persistence.entity.constant.room.RoomType;
 import lombok.*;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -10,13 +11,15 @@ import lombok.*;
 public class CreateChatRoomCommand {
 
     private String name;
-    private Long senderId;
+    private Long invitedMemberId;
+    private RoomType roomType;
 
     // factory method
     public static CreateChatRoomCommand of(ChatRoomRequestDto createChatRoomDto) {
         return CreateChatRoomCommand.builder()
                 .name(createChatRoomDto.getName())
-                .senderId(createChatRoomDto.getSenderId())
+                .invitedMemberId(createChatRoomDto.getInvitedMemberId())
+                .roomType(createChatRoomDto.getRoomType())
                 .build();
     }
 

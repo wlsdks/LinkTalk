@@ -4,10 +4,12 @@ import com.tony.linktalk.adapter.in.web.dto.response.chat.room.ChatRoomResponseD
 import com.tony.linktalk.application.command.chat.room.CreateChatRoomCommand;
 import com.tony.linktalk.application.port.in.chat.room.CreateChatRoomUseCase;
 import com.tony.linktalk.application.port.out.chatroom.CreateChatRoomPort;
+import com.tony.linktalk.config.security.http.user.UserDetailsImpl;
 import com.tony.linktalk.domain.ChatRoom;
 import com.tony.linktalk.mapper.ChatRoomMapper;
 import com.tony.linktalk.util.custom.UseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RequiredArgsConstructor
 @UseCase
@@ -26,9 +28,8 @@ public class CreateChatRoomService implements CreateChatRoomUseCase {
     public ChatRoomResponseDto createDmChatRoom(CreateChatRoomCommand command) {
         ChatRoom chatRoom = chatRoomMapper.commandToDomain(command);
 
-//         todo: security에서 id를 뽑아내서 추가
-//        SecurityUtil.getMemberId();
-//        chatRoom.changeCreatorId(1L);
+        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        chatRoom.changeCreatorId(principal.getMemberId());
 
         ChatRoom savedChatRoom = createChatRoomPort.createDmChatRoom(chatRoom);
         return chatRoomMapper.domainToResponseDto(savedChatRoom);

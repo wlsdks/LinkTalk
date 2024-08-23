@@ -26,6 +26,14 @@ public class ChatWebSocketMessage {
                 .build();
     }
 
+    // factory method
+    public static ChatWebSocketMessage of(String payload) {
+        return ChatWebSocketMessage.builder()
+                .content(payload)
+                .chatMessageType(ChatMessageType.TEXT)
+                .build();
+    }
+
     /**
      * @param chatRoomId 채팅방 ID
      * @apiNote 채팅방 ID를 변경한다.
