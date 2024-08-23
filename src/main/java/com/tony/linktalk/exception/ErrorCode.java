@@ -47,6 +47,11 @@ public enum ErrorCode {
     INVALID_FILE_TYPE("FILE004", "Invalid file type"),
 
 
+    // chat room errors
+    CHAT_MESSAGE_ID_NOT_FOUND("CHAT001", "Chat message ID not found"),
+    CHAT_MESSAGE_STATUS_NOT_FOUND("CHAT002", "Chat message status not found"),
+    CHAT_MESSAGE_NOT_FOUND("CHAT003", "Chat message not found"),
+
     ;
 
     private final String code;

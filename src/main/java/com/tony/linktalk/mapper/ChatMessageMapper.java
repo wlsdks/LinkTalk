@@ -30,7 +30,7 @@ public interface ChatMessageMapper {
     List<ChatMessage> entitiesToDomains(List<ChatMessageEntity> chatMessageEntities);
 
     @Mapping(target = "chatRoomEntity", source = "chatRoom")
-    @Mapping(target = "senderEntity", source = "sender")
+    @Mapping(target = "memberEntity", source = "sender")
     ChatMessageEntity domainToEntity(ChatMessage chatMessage);
 
 }
