@@ -3,7 +3,6 @@ package com.tony.linktalk.config.websocket;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tony.linktalk.adapter.in.web.dto.request.chat.message.ChatMessageRequestDto;
-import com.tony.linktalk.adapter.out.persistence.entity.constant.message.ChatMessageStatus;
 import com.tony.linktalk.application.command.chat.message.CreateChatMessageCommand;
 import com.tony.linktalk.application.port.in.chat.message.CreateChatMessageUseCase;
 import com.tony.linktalk.config.websocket.dto.ChatWebSocketMessage;
@@ -40,6 +39,10 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        log.debug("Attributes in session: {}", session.getAttributes());
+        Object chatRoomId = session.getAttributes().get("chatRoomId");
+        log.debug("ChatRoomId in session: {}", chatRoomId);
+
         // 새로운 WebSocket 세션이 연결되면 세션을 리스트에 추가
         sessions.add(session);
 
@@ -135,44 +138,21 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      */
     public void sendMessageToReceiver(String message) throws Exception {
         for (WebSocketSession session : sessions) {
-//            Long chatRoomId = extractChatRoomIdFrom(session);
-//            Long memberId = (Long) session.getAttributes().get("memberId"); // 세션의 사용자 ID를 가져옴
-
-            // 채팅방 ID와 수신자 ID가 일치하는 경우에만 상대방에게 메시지 전송
             if (session.isOpen()) {
-                try {
-                    session.sendMessage(new TextMessage(message));
-                } catch (IOException e) {
-                    log.error("Error sending WebSocket message", e);
+                synchronized (session) { // 동기화 블록을 추가하여 동시 접근을 방지
+                    try {
+                        session.sendMessage(new TextMessage(message));
+                    } catch (IOException e) {
+                        log.error("Error sending WebSocket message", e);
+                    } catch (IllegalStateException e) {
+                        log.error("IllegalStateException: WebSocket session is not in a valid state for sending a message", e);
+                    }
                 }
             } else {
                 log.warn("Attempted to send message on a closed WebSocket session.");
             }
         }
     }
-
-
-    /**
-     * @param sessionChatRoomId 세션의 채팅방 ID
-     * @param chatRoomId        채팅방 ID
-     * @return 채팅방 ID가 일치하는지 여부
-     * @apiNote 채팅방 ID가 일치하는지 확인합니다.
-     */
-    private boolean isChatRoomIdEqual(Long sessionChatRoomId, Long chatRoomId) {
-        return sessionChatRoomId != null && sessionChatRoomId.equals(chatRoomId);
-    }
-
-
-    /**
-     * @param sessionUserId 세션의 사용자 ID
-     * @param receiverId    수신자 ID
-     * @return 수신자 ID가 일치하는지 여부
-     * @apiNote 수신자 ID가 일치하는지 확인합니다.
-     */
-    private boolean isReceiverIdEqual(Long sessionUserId, Long receiverId) {
-        return sessionUserId != null && sessionUserId.equals(receiverId);
-    }
-
 
     /**
      * @param chatWebSocketMessage ChatWebSocketMessage
@@ -200,11 +180,21 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      */
     private Long extractChatRoomIdFrom(WebSocketSession session) {
         Object chatRoomId = session.getAttributes().get("chatRoomId");
+        if (chatRoomId == null) {
+            log.error("Chat room ID is null");
+            return null;
+        }
         if (chatRoomId instanceof Long) {
             return (Long) chatRoomId;
+        } else if (chatRoomId instanceof String) {
+            try {
+                return Long.parseLong((String) chatRoomId);
+            } catch (NumberFormatException e) {
+                log.error("Chat room ID is not a valid Long value: {}", chatRoomId);
+            }
         }
-        log.error("Chat room ID is not of type Long");
-        return null; // 또는 적절한 기본값 설정
+        log.error("Chat room ID is not of type Long or String");
+        return null;
     }
 
 
@@ -215,10 +205,21 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      */
     private static Long extractReceiverIdFrom(WebSocketSession session) {
         Object memberId = session.getAttributes().get("memberId");
+        if (memberId == null) {
+            log.error("Receiver ID is null");
+            return null;
+        }
         if (memberId instanceof Long) {
             return (Long) memberId;
+        } else if (memberId instanceof String) {
+            try {
+                return Long.parseLong((String) memberId);
+            } catch (NumberFormatException e) {
+                log.error("Receiver ID is not a valid Long value: {}", memberId);
+            }
         }
-        log.error("Receiver ID is not of type Long");
-        return null; // 또는 적절한 기본값 설정
+        log.error("Receiver ID is not of type Long or String");
+        return null;
     }
+
 }

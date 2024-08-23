@@ -31,6 +31,6 @@ file:
 
 logging:
   level:
-    root: WARN
+    root: DEBUG
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG

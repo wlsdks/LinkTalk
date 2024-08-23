@@ -4,6 +4,7 @@ import com.tony.linktalk.util.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ import java.util.Map;
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final DataSourceTransactionManagerAutoConfiguration dataSourceTransactionManagerAutoConfiguration;
 
     // todo: 클라인언트 예시: const socket = new WebSocket('ws://localhost:8080/chat?token=your-jwt-token&chatRoomId=12345');
 
@@ -46,6 +48,8 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
                 .getQueryParams()
                 .getFirst("token");
 
+        System.out.println("Extracted token: " + token);
+
         // JWT 토큰이 유효한 경우, 속성에 사용자 정보를 추가
         if (token != null && jwtTokenProvider.validateJwtToken(token)) {
             Claims claims = jwtTokenProvider.getClaimsFromJwtToken(token);
@@ -62,9 +66,14 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
                     .getQueryParams()
                     .getFirst("chatRoomId");
 
+            System.out.println("Extracted chatRoomId: " + chatRoomId);
+
             if (chatRoomId != null) {
                 attributes.put("chatRoomId", Long.parseLong(chatRoomId));
+                System.out.println("Stored chatRoomId in attributes: " + attributes.get("chatRoomId"));
             }
+
+            System.out.println("attributes: " + attributes);
 
             return true;
         }
