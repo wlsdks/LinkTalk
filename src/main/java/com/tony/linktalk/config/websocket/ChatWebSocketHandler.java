@@ -39,15 +39,19 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        log.debug("Attributes in session: {}", session.getAttributes());
-        Object chatRoomId = session.getAttributes().get("chatRoomId");
-        log.debug("ChatRoomId in session: {}", chatRoomId);
+        // 세션의 속성이 초기화될 때까지 대기 (비동기 환경에서 안전성을 보장)
+        synchronized (session) {
+            log.debug("Attributes in session: {}", session.getAttributes());
+            Object chatRoomId = session.getAttributes().get("chatRoomId");
+            log.debug("ChatRoomId in session: {}", chatRoomId);
 
-        // 새로운 WebSocket 세션이 연결되면 세션을 리스트에 추가
-        sessions.add(session);
-
-        // 채팅방 입장 메시지 브로드캐스트
-        sendMessageToReceiver("사용자가 채팅방에 입장했습니다.");
+            if (chatRoomId != null) {
+                sessions.add(session);
+                sendMessageToReceiver("사용자가 채팅방에 입장했습니다.");
+            } else {
+                log.error("ChatRoomId is null in afterConnectionEstablished.");
+            }
+        }
     }
 
 

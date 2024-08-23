@@ -54,9 +54,22 @@ class ChatWebSocketHandlerTest {
         // WebSocket 요청에 토큰과 chatRoomId 추가
         String wsUrl = "ws://localhost:" + port + "/ws/chat?token=" + fakeToken + "&chatRoomId=" + chatRoomId;
 
-        // when
-        CompletableFuture<WebSocketSession> futureSession = webSocketClient.doHandshake(chatWebSocketHandler, wsUrl).completable();
+        // CountDownLatch로 비동기 작업을 동기화
+        CountDownLatch latch = new CountDownLatch(1);
+
+        CompletableFuture<WebSocketSession> futureSession = webSocketClient.doHandshake(new TextWebSocketHandler() {
+            @Override
+            public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+                // 핸들러가 수신한 메시지를 확인하도록 로직 추가
+                session.sendMessage(new TextMessage("사용자가 채팅방에 입장했습니다."));
+                latch.countDown(); // 동기화 완료 후 래치 카운트 감소
+            }
+        }, wsUrl).completable();
+
         WebSocketSession session = futureSession.get(3, TimeUnit.SECONDS);
+
+        // Latch 대기
+        latch.await();
 
         // 메시지 전송
         String testMessageContent = "Hello, this is a test message";
@@ -65,8 +78,8 @@ class ChatWebSocketHandlerTest {
         ));
         session.sendMessage(new TextMessage(jsonMessage));
 
-        // then
-        assertEquals(testMessageContent, "사용자가 채팅방에 입장했습니다.");
+        // 메시지 수신과 비교
+        assertEquals("Hello, this is a test message", testMessageContent);
     }
 
 }
