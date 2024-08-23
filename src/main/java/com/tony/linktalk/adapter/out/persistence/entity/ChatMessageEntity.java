@@ -1,7 +1,12 @@
 package com.tony.linktalk.adapter.out.persistence.entity;
 
+import com.tony.linktalk.adapter.out.persistence.entity.constant.message.ChatMessageStatus;
+import com.tony.linktalk.adapter.out.persistence.entity.constant.message.ChatMessageType;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -24,16 +29,18 @@ public class ChatMessageEntity {
 
     @JoinColumn(name = "sender_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private MemberEntity senderEntity;
+    private MemberEntity memberEntity;
 
     @Column(name = "content")
     private String content;
 
-    @Column(name = "status")
-    private String status; // 예: "SENT", "DELIVERED", "READ"
+    @Enumerated(EnumType.STRING)
+    @Column(name = "message_status")
+    private ChatMessageStatus chatMessageStatus;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "message_type")
-    private String messageType; // 예: "TEXT", "IMAGE", "FILE"
+    private ChatMessageType chatMessageType;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

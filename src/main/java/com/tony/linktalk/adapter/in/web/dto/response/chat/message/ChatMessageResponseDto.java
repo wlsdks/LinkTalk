@@ -1,7 +1,10 @@
 package com.tony.linktalk.adapter.in.web.dto.response.chat.message;
 
-import com.tony.linktalk.config.websocket.dto.ChatWebSocketMessage;
+import com.tony.linktalk.adapter.out.persistence.entity.constant.message.ChatMessageStatus;
+import com.tony.linktalk.adapter.out.persistence.entity.constant.message.ChatMessageType;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
@@ -14,15 +17,8 @@ public class ChatMessageResponseDto {
     private Long senderId;
     private Long receiverId;
     private String content;
-
-    // factory method
-    public static ChatMessageResponseDto of(ChatWebSocketMessage chatWebSocketMessage) {
-        return ChatMessageResponseDto.builder()
-                .chatRoomId(chatWebSocketMessage.getChatRoomId())
-                .senderId(chatWebSocketMessage.getSenderId())
-                .receiverId(chatWebSocketMessage.getReceiverId())
-                .content(chatWebSocketMessage.getContent())
-                .build();
-    }
+    private ChatMessageType chatMessageType;
+    private ChatMessageStatus chatMessageStatus;
+    private LocalDateTime createdAt;
 
 }

@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 @Getter
 @AllArgsConstructor
-public enum MessageStatus {
+public enum OutboxMessageStatus {
 
     PENDING("PENDING", "대기"),
     PROCESSED("PROCESSED", "처리완료"),
@@ -19,16 +19,16 @@ public enum MessageStatus {
 
 
     /**
-     * 코드로 MessageStatus 찾기
+     * 코드로 OutboxMessageStatus 찾기
      *
      * @param code 코드
-     * @return MessageStatus
+     * @return OutboxMessageStatus
      */
-    public static MessageStatus of(String code) {
-        return Arrays.stream(MessageStatus.values())
-                .filter(messageStatus -> messageStatus.getCode().equals(code))
+    public static OutboxMessageStatus of(String code) {
+        return Arrays.stream(OutboxMessageStatus.values())
+                .filter(outboxMessageStatus -> outboxMessageStatus.getCode().equals(code))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Invalid MessageStatus code: " + code));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid OutboxMessageStatus code: " + code));
     }
 
 }
