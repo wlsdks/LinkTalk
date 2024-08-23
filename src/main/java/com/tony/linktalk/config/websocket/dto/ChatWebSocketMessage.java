@@ -1,5 +1,6 @@
 package com.tony.linktalk.config.websocket.dto;
 
+import com.tony.linktalk.adapter.out.persistence.entity.constant.message.ChatMessageType;
 import lombok.*;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -9,7 +10,7 @@ import lombok.*;
 @Getter
 public class ChatWebSocketMessage {
 
-    private String messageType; // "TEXT" 또는 "FILE"
+    private ChatMessageType chatMessageType;
     private Long chatRoomId;
     private Long senderId;
     private Long receiverId;

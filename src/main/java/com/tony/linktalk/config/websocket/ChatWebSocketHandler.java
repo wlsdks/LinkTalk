@@ -2,7 +2,8 @@ package com.tony.linktalk.config.websocket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tony.linktalk.adapter.in.web.dto.response.chat.message.ChatMessageResponseDto;
+import com.tony.linktalk.adapter.in.web.dto.request.chat.message.ChatMessageRequestDto;
+import com.tony.linktalk.adapter.out.persistence.entity.constant.message.ChatMessageStatus;
 import com.tony.linktalk.application.command.chat.message.CreateChatMessageCommand;
 import com.tony.linktalk.application.port.in.chat.message.CreateChatMessageUseCase;
 import com.tony.linktalk.config.websocket.dto.ChatWebSocketMessage;
@@ -79,9 +80,12 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             chatWebSocketMessage.changeReceiverId(receiverId);
 
             // 메시지 타입에 따른 처리
-            String broadcastMessage = switch (chatWebSocketMessage.getMessageType()) {
-                case "TEXT" -> chatWebSocketMessage.getContent() + " from " + nickname;
-                case "FILE" -> "파일이 전송되었습니다: " + chatWebSocketMessage.getContent();
+            String broadcastMessage = switch (chatWebSocketMessage.getChatMessageType()) {
+                case TEXT -> chatWebSocketMessage.getContent() + " from " + nickname;
+                case FILE -> "파일이 전송되었습니다: " + chatWebSocketMessage.getContent();
+                case IMAGE -> "이미지가 전송되었습니다: " + chatWebSocketMessage.getContent();
+                case VIDEO -> "비디오가 전송되었습니다: " + chatWebSocketMessage.getContent();
+                case AUDIO -> "오디오가 전송되었습니다: " + chatWebSocketMessage.getContent();
                 default -> "알 수 없는 메시지 타입입니다.";
             };
 
@@ -178,10 +182,10 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      */
     private void saveChatMessage(ChatWebSocketMessage chatWebSocketMessage) {
         // ChatMessageResponseDto로 변환
-        ChatMessageResponseDto chatMessageResponseDto = ChatMessageResponseDto.of(chatWebSocketMessage);
+        ChatMessageRequestDto chatMessageRequestDto = ChatMessageRequestDto.of(chatWebSocketMessage);
 
         // CreateChatMessageCommand로 변환
-        CreateChatMessageCommand command = CreateChatMessageCommand.of(chatMessageResponseDto);
+        CreateChatMessageCommand command = CreateChatMessageCommand.of(chatMessageRequestDto);
 
         // 메시지 저장 로직 호출
         // todo: 이걸 Kafka로 처리해 보자
