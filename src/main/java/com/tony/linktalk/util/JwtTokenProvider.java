@@ -1,9 +1,6 @@
 package com.tony.linktalk.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +11,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 /**
  * JWT 토큰 생성 및 검증을 담당하는 클래스
@@ -49,7 +47,7 @@ public class JwtTokenProvider {
      * @return 생성된 JWT Access 토큰
      * @apiNote JWT Access 토큰을 생성하는 메서드
      */
-    public String generateAccessToken(String email, String nickname) {
+    public String generateAccessToken(String email, String nickname, Long memberId) {
         // 시간 정보 생성
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
@@ -58,6 +56,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .subject(email)
                 .claim("nickname", nickname)
+                .claim("memberId", memberId)
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(secretKey)
@@ -69,7 +68,7 @@ public class JwtTokenProvider {
      * @return 생성된 JWT Access 토큰
      * @apiNote JWT Access 토큰을 재발행하는 메서드
      */
-    public String regenerateAccessToken(String email, String nickname) {
+    public String regenerateAccessToken(String email, String nickname, Long memberId) {
         // 시간 정보 생성
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
@@ -78,6 +77,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .subject(email)
                 .claim("nickname", nickname)
+                .claim("memberId", memberId)
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(secretKey)
@@ -109,6 +109,17 @@ public class JwtTokenProvider {
                 .verifyWith(secretKey).build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+
+    /**
+     * @param token JWT 토큰
+     * @return 사용자 ID
+     * @apiNote JWT 토큰에서 사용자 ID를 추출하는 메서드
+     */
+    public Long getMemberIdFromJwtToken(String token) {
+        Claims claims = getClaimsFromJwtToken(token);
+        return claims.get("memberId", Long.class);
     }
 
 

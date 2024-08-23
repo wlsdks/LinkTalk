@@ -1,17 +1,5 @@
 server:
-  port: 8090
-  servlet:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
-
-# JWT 설정
-jwt:
-  jwtSecret: "aVeryLongSecretKeyThatIsAtLeast32BytesLongForSecurity"
-  jwtExpirationMs: 3600000 # 1시간 (밀리초 단위)
-  jwtRefreshExpirationMs: 86400000 # 24시간 (밀리초 단위)
-  refreshTokenDurationMinutes: 1440 # 24시간 (분 단위)
+  port: 8090  # 테스트 중에는 일반 설정과 동일한 포트를 사용
 
 spring:
   datasource:
@@ -36,10 +24,19 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
     database-platform: org.hibernate.dialect.H2Dialect
     database: h2
-  p6spy:
-    filter:
-      include: .*
+
+jwt:
+  jwtSecret: "aVeryLongSecretKeyThatIsAtLeast32BytesLongForSecurityInTest"
+  jwtExpirationMs: 3600000
+  jwtRefreshExpirationMs: 86400000
+  refreshTokenDurationMinutes: 1440
 
 file:
-  upload-dir: /Users/your-username/Downloads # 파일이 저장될 경로
-  url-prefix: http://localhost:8080/files # 파일 접근을 위한 URL prefix
+  upload-dir: /tmp/test-uploads # 테스트 중 파일이 저장될 경로
+  url-prefix: http://localhost:8090/files # 테스트 중 파일 접근을 위한 URL prefix
+
+logging:
+  level:
+    root: WARN
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG

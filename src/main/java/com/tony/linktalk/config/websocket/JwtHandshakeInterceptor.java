@@ -1,14 +1,11 @@
 package com.tony.linktalk.config.websocket;
 
-import com.tony.linktalk.config.security.http.user.UserDetailsImpl;
 import com.tony.linktalk.util.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
@@ -52,11 +49,11 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
         // JWT 토큰이 유효한 경우, 속성에 사용자 정보를 추가
         if (token != null && jwtTokenProvider.validateJwtToken(token)) {
             Claims claims = jwtTokenProvider.getClaimsFromJwtToken(token);
+            Long memberId = jwtTokenProvider.getMemberIdFromJwtToken(token);
             String email = claims.getSubject();
-            Long userId = securityContextGetMemberId();
 
             attributes.put("email", email);
-            attributes.put("userId", userId);
+            attributes.put("memberId", memberId);
             attributes.put("nickname", claims.get("nickname", String.class));
 
             // 채팅방 ID가 존재하는 경우 속성에 추가
@@ -86,17 +83,6 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
         // Do nothing
-    }
-
-
-    /**
-     * @return 사용자 ID
-     * @apiNote SecurityContext에서 사용자 정보를 가져오는 메서드
-     */
-    private static Long securityContextGetMemberId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        return userDetails.getMemberId();
     }
 
 }

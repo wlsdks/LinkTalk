@@ -140,7 +140,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     public void sendMessageToReceiver(Long chatRoomId, String message, Long receiverId) throws Exception {
         for (WebSocketSession session : sessions) {
             Long sessionChatRoomId = extractChatRoomIdFrom(session);
-            Long sessionUserId = (Long) session.getAttributes().get("userId"); // 세션의 사용자 ID를 가져옴
+            Long sessionUserId = (Long) session.getAttributes().get("memberId"); // 세션의 사용자 ID를 가져옴
 
             // 채팅방 ID와 수신자 ID가 일치하는 경우에만 상대방에게 메시지 전송
             if (isChatRoomIdEqual(sessionChatRoomId, chatRoomId) && isReceiverIdEqual(sessionUserId, receiverId)) {
@@ -211,7 +211,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      * @apiNote 세션에서 수신자 ID를 가져옵니다. (jwtHandshakeInterceptor에서 설정한 속성)
      */
     private static Long extractReceiverIdFrom(WebSocketSession session) {
-        return (Long) session.getAttributes().get("userId");
+        return (Long) session.getAttributes().get("memberId");
     }
 
 }

@@ -16,6 +16,16 @@ public class ChatWebSocketMessage {
     private Long receiverId;
     private String content; // 메시지 내용 또는 파일 URL
 
+    // factory method
+    public static ChatWebSocketMessage of(ChatMessageType chatMessageType, long chatRoomId, long senderId, String testMessageContent) {
+        return ChatWebSocketMessage.builder()
+                .chatMessageType(chatMessageType)
+                .chatRoomId(chatRoomId)
+                .senderId(senderId)
+                .content(testMessageContent)
+                .build();
+    }
+
     /**
      * @param chatRoomId 채팅방 ID
      * @apiNote 채팅방 ID를 변경한다.

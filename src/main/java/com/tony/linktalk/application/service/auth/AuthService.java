@@ -70,7 +70,8 @@ public class AuthService implements AuthUseCase {
         Member findMember = findMemberPort.findMemberByEmail(member.getEmail());
 
         // 3. JWT access 토큰 생성
-        String accessToken = jwtTokenProvider.generateAccessToken(findMember.getEmail(), findMember.getNickname());
+        String accessToken = jwtTokenProvider
+                .generateAccessToken(findMember.getEmail(), findMember.getNickname(), findMember.getId());
 
         // 4. JWT refresh 토큰을 생성하고 저장
         RefreshToken refreshToken = RefreshToken.of(findMember, refreshTokenDurationMinutes);
@@ -158,7 +159,8 @@ public class AuthService implements AuthUseCase {
         Member member = findRefreshToken.getMember();
 
         // 5. 새로운 access 토큰 생성
-        String newAccessToken = jwtTokenProvider.regenerateAccessToken(member.getEmail(), member.getNickname());
+        String newAccessToken = jwtTokenProvider
+                .regenerateAccessToken(member.getEmail(), member.getNickname(), member.getId());
 
         // 6. 갱신된 JWT 토큰 정보를 DTO에 담아 반환
         return JwtResponseDto.of(newAccessToken, findRefreshToken.getToken());

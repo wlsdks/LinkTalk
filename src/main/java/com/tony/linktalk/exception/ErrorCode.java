@@ -52,6 +52,12 @@ public enum ErrorCode {
     CHAT_MESSAGE_STATUS_NOT_FOUND("CHAT002", "Chat message status not found"),
     CHAT_MESSAGE_NOT_FOUND("CHAT003", "Chat message not found"),
 
+    // security errors
+    UNAUTHORIZED("UNAUTHORIZED", "Unauthorized"),
+    AUTHENTICATION_ERROR("AUTHENTICATION_ERROR", "Authentication error"),
+    PRINCIPAL_CAST_ERROR("PRINCIPAL_CAST_ERROR", "Principal cast error")
+
+
     ;
 
     private final String code;
