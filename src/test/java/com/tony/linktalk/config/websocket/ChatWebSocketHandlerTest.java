@@ -57,6 +57,16 @@ class ChatWebSocketHandlerTest {
     }
 
 
+    /**
+     * @apiNote 테스트 코드에서 별도의 handleTextMessage를 정의하는가?
+     * 1. 테스트에서의 역할:
+     * 테스트는 서버와의 WebSocket 통신이 예상대로 동작하는지를 확인하는 것이 목적이다.
+     * 클라이언트 측에서는 서버로부터 수신된 메시지를 받아야 하며, 이를 receivedMessages에 추가함으로써 나중에 수신된 메시지를 검증할 수 있게 된다.
+     *
+     * 2. 독립적인 테스트 환경:
+     * ChatWebSocketHandler의 실제 동작과 무관하게, 테스트 환경에서는 오직 메시지를 수신하고 그 결과를 검증하는 데에 집중해야 한다.
+     * 이를 위해 테스트 코드 내에 별도의 TextWebSocketHandler를 정의하여 테스트 목적에 맞는 메시지 처리 로직을 구현한 것이다.
+     */
     @DisplayName("ChatWebSocketHandler 메시지 전송 및 수신 테스트")
     @Test
     void testWebSocketConnectionAndMessageHandling() throws Exception {
@@ -74,7 +84,7 @@ class ChatWebSocketHandlerTest {
         // CreateChatMessageUseCase의 mock 동작 정의
         doNothing().when(createChatMessageUseCase).createChatMessage(any());
 
-        // WebSocketHandler 정의
+        // WebSocketHandler 정의 (이 코드에서 정의된 handleTextMessage 메서드는 테스트 중에 클라이언트 측에서 수신되는 메시지를 처리하기 위해 사용됩니다.)
         WebSocketHandler webSocketHandler = new TextWebSocketHandler() {
             @Override
             protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {

@@ -60,13 +60,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      * @param message TextMessage
      * @throws Exception Exception
      * @apiNote 메시지를 수신하면 이를 ChatMessageDto로 변환하고 데이터베이스에 저장한 후, 연결된 수신자에게만 메시지를 브로드캐스트한다.
-     * client 전송 예시
-     * {
-     * "messageType": "TEXT",
-     * "senderId": 123,
-     * "receiverId": 456,
-     * "content": "Hello, this is a test message"
-     * }
+     * 이 메서드는 애플리케이션 코드에서 WebSocket 서버가 수신한 메시지를 처리하기 위해 존재한다.
+     * 클라이언트로부터 수신된 WebSocket 메시지를 분석하고, 메시지 유형에 따라 적절한 로직(예: 메시지 저장, 브로드캐스트)을 수행한다.
      */
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
