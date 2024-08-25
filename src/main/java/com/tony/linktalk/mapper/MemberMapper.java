@@ -7,6 +7,7 @@ import com.tony.linktalk.adapter.out.persistence.entity.MemberEntity;
 import com.tony.linktalk.application.command.auth.SignInCommand;
 import com.tony.linktalk.application.command.auth.SignOutCommand;
 import com.tony.linktalk.application.command.auth.SignUpCommand;
+import com.tony.linktalk.application.command.member.UpdateMemberCommand;
 import com.tony.linktalk.domain.Member;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -37,5 +38,11 @@ public interface MemberMapper {
 
     // 로그아웃 요청 Command를 도메인으로 변환
     Member commandToDomain(SignOutCommand signOutCommand);
+
+    // 회원 정보 수정 Command를 도메인으로 변환
+    Member commandToDomain(UpdateMemberCommand command);
+
+    // 도메인을 응답 DTO로 변환
+    MemberResponseDto domainToResponse(Member updatedMember);
 
 }

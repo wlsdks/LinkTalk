@@ -140,4 +140,20 @@ public class Member {
         return !this.email.equals(email);
     }
 
+
+    /**
+     * @param member Member
+     * @apiNote 회원 정보 수정
+     */
+    public void updateMember(Member member) {
+        this.email = member.email;
+        this.password = member.password;
+        this.name = member.name;
+        this.nickname = member.nickname;
+        this.profilePictureUrl = member.profilePictureUrl;
+        this.introduction = member.introduction;
+        this.phoneNumber = member.phoneNumber;
+        this.address = member.address;
+    }
+
 }
