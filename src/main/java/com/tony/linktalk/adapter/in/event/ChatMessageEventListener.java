@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+/**
+ * 채팅 메시지 이벤트 리스너
+ */
 @RequiredArgsConstructor
 @Component
 public class ChatMessageEventListener {
