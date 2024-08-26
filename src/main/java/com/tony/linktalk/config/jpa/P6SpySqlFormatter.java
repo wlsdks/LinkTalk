@@ -14,39 +14,47 @@ public class P6SpySqlFormatter implements MessageFormattingStrategy {
 
     @PostConstruct
     public void setLogMessageFormat() {
+        // Set the custom formatter for P6Spy
         P6SpyOptions.getActiveInstance().setLogMessageFormat(this.getClass().getName());
     }
 
     @Override
     public String formatMessage(int connectionId, String now, long elapsed, String category, String prepared, String sql, String url) {
-        // 배치 테이블 관련 쿼리 제외
-        if (isBatchTableQuery(sql)) {
-            return ""; // 배치 테이블 관련 쿼리는 로그에서 제외
+        if (sql == null || sql.trim().isEmpty() || isBatchTableQuery(sql)) {
+            return "";
         }
-        return String.format("[%s] | %d ms | %s", category, elapsed, formatSql(category, sql));
+
+        String formattedSql = formatSql(category, sql);
+
+        return String.format(
+                """
+                Time: %s | Category: %s | Elapsed: %d ms
+                JPA QUERY START: ◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼
+                %s \n
+                JPA QUERY END: ◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼
+                """,
+                now, category.toUpperCase(Locale.ROOT), elapsed, formattedSql
+        );
     }
 
     private boolean isBatchTableQuery(String sql) {
-        if (sql != null) {
-            String lowerCaseSql = sql.toLowerCase(Locale.ROOT);
-            return lowerCaseSql.contains("batch_job_instance") ||
-                    lowerCaseSql.contains("batch_job_execution") ||
-                    lowerCaseSql.contains("batch_step_execution") ||
-                    lowerCaseSql.contains("batch_step_execution_context");
-        }
-        return false;
+        String lowerCaseSql = sql.toLowerCase(Locale.ROOT);
+        return lowerCaseSql.contains("batch_job_instance") ||
+                lowerCaseSql.contains("batch_job_execution") ||
+                lowerCaseSql.contains("batch_step_execution") ||
+                lowerCaseSql.contains("batch_step_execution_context");
     }
 
     private String formatSql(String category, String sql) {
-        if (sql != null && !sql.trim().isEmpty() && Category.STATEMENT.getName().equals(category)) {
-            String trimmedSQL = sql.trim().toLowerCase(Locale.ROOT);
-            if (trimmedSQL.startsWith("create") || trimmedSQL.startsWith("alter") || trimmedSQL.startsWith("comment")) {
-                sql = FormatStyle.DDL.getFormatter().format(sql);
+        if (Category.STATEMENT.getName().equals(category)) {
+            String trimmedSql = sql.trim().toLowerCase(Locale.ROOT);
+            if (trimmedSql.startsWith("create") || trimmedSql.startsWith("alter") || trimmedSql.startsWith("comment")) {
+                return FormatStyle.DDL.getFormatter().format(sql); // Format DDL statements
             } else {
-                sql = FormatStyle.BASIC.getFormatter().format(sql);
+                return FormatStyle.BASIC.getFormatter().format(sql); // Format basic SQL statements
             }
-            return sql;
         }
         return sql;
     }
+
 }
