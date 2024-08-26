@@ -1,6 +1,7 @@
 package com.tony.linktalk.adapter.out.persistence.entity.post;
 
 import com.tony.linktalk.adapter.out.persistence.entity.BaseEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.constant.post.MediaType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,8 +22,9 @@ public class MediaEntity extends BaseEntity {
     @Column(name = "url", nullable = false)
     private String url; // 미디어 파일의 URL
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "media_type", nullable = false)
-    private String mediaType; // 이미지, 비디오 등의 미디어 타입
+    private MediaType mediaType; // 이미지, 비디오 등의 미디어 타입
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")

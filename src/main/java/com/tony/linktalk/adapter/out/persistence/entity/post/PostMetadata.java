@@ -1,7 +1,10 @@
 package com.tony.linktalk.adapter.out.persistence.entity.post;
 
+import com.tony.linktalk.adapter.out.persistence.entity.constant.post.Visibility;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Getter;
 
 @Getter
@@ -11,8 +14,9 @@ public class PostMetadata {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "visibility")
-    private String visibility = "public";
+    @Enumerated(EnumType.STRING)
+    @Column(name = "visibility", nullable = false)
+    private Visibility visibility = Visibility.PUBLIC;
 
     @Column(name = "status")
     private String status = "active";
