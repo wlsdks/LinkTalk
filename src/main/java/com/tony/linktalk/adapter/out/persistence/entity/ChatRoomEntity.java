@@ -7,7 +7,7 @@ import lombok.*;
 import java.util.Objects;
 
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Getter
 @Entity

@@ -1,10 +1,7 @@
 package com.tony.linktalk.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -14,7 +11,7 @@ import java.util.Objects;
  * 동시에, 서버는 리프레시 토큰을 자신의 데이터베이스(RDB)에 저장하여 나중에 유효성 검증 및 토큰 재발급 시 사용할 수 있도록 합니다.
  */
 @Builder
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @Getter
 @Entity
