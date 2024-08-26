@@ -1,6 +1,6 @@
 package com.tony.linktalk.adapter.out.persistence.adapter;
 
-import com.tony.linktalk.adapter.out.persistence.entity.ChatMessageEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.chat.ChatMessageEntity;
 import com.tony.linktalk.adapter.out.persistence.repository.ChatMessageRepository;
 import com.tony.linktalk.application.port.out.chat.CreateChatMessagePort;
 import com.tony.linktalk.application.port.out.chat.FindChatMessagePort;

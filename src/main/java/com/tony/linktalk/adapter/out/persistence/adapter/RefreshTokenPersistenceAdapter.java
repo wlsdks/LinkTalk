@@ -1,7 +1,7 @@
 package com.tony.linktalk.adapter.out.persistence.adapter;
 
-import com.tony.linktalk.adapter.out.persistence.entity.MemberEntity;
-import com.tony.linktalk.adapter.out.persistence.entity.RefreshTokenEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.member.MemberEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.member.RefreshTokenEntity;
 import com.tony.linktalk.adapter.out.persistence.repository.RefreshTokenRepository;
 import com.tony.linktalk.application.port.out.refreshtoken.CreateRefreshTokenPort;
 import com.tony.linktalk.application.port.out.refreshtoken.DeleteRefreshTokenPort;

@@ -1,6 +1,6 @@
 package com.tony.linktalk.adapter.out.persistence.repository;
 
-import com.tony.linktalk.adapter.out.persistence.entity.ChatRoomEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.chat.ChatRoomEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

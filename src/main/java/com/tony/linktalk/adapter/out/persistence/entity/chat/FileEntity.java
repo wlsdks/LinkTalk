@@ -1,5 +1,6 @@
-package com.tony.linktalk.adapter.out.persistence.entity;
+package com.tony.linktalk.adapter.out.persistence.entity.chat;
 
+import com.tony.linktalk.adapter.out.persistence.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

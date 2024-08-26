@@ -1,6 +1,7 @@
-package com.tony.linktalk.adapter.out.persistence.entity;
+package com.tony.linktalk.adapter.out.persistence.entity.chat;
 
 import com.tony.linktalk.adapter.out.persistence.entity.constant.NotificationType;
+import com.tony.linktalk.adapter.out.persistence.entity.member.MemberEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

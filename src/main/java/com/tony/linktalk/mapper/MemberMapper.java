@@ -3,7 +3,7 @@ package com.tony.linktalk.mapper;
 
 import com.tony.linktalk.adapter.in.web.dto.request.auth.SignOutRequestDto;
 import com.tony.linktalk.adapter.in.web.dto.response.auth.MemberResponseDto;
-import com.tony.linktalk.adapter.out.persistence.entity.MemberEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.member.MemberEntity;
 import com.tony.linktalk.application.command.auth.SignInCommand;
 import com.tony.linktalk.application.command.auth.SignOutCommand;
 import com.tony.linktalk.application.command.auth.SignUpCommand;

@@ -1,6 +1,6 @@
 package com.tony.linktalk.mapper;
 
-import com.tony.linktalk.adapter.out.persistence.entity.RefreshTokenEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.member.RefreshTokenEntity;
 import com.tony.linktalk.domain.RefreshToken;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

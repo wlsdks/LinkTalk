@@ -1,6 +1,6 @@
 package com.tony.linktalk.config.security.http.user;
 
-import com.tony.linktalk.adapter.out.persistence.entity.MemberEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.member.MemberEntity;
 import com.tony.linktalk.adapter.out.persistence.repository.MemberRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

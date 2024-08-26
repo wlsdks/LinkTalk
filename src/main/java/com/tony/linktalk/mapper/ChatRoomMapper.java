@@ -1,7 +1,7 @@
 package com.tony.linktalk.mapper;
 
 import com.tony.linktalk.adapter.in.web.dto.response.chat.room.ChatRoomResponseDto;
-import com.tony.linktalk.adapter.out.persistence.entity.ChatRoomEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.chat.ChatRoomEntity;
 import com.tony.linktalk.application.command.chat.room.CreateChatRoomCommand;
 import com.tony.linktalk.domain.ChatRoom;
 import org.mapstruct.Mapper;

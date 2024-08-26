@@ -1,6 +1,6 @@
 package com.tony.linktalk.adapter.out.persistence.adapter;
 
-import com.tony.linktalk.adapter.out.persistence.entity.FileEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.chat.FileEntity;
 import com.tony.linktalk.adapter.out.persistence.repository.FileRepository;
 import com.tony.linktalk.application.port.out.file.CreateFilePort;
 import com.tony.linktalk.application.port.out.file.FindFilePort;

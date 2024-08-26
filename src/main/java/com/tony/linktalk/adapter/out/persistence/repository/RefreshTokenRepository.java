@@ -1,7 +1,7 @@
 package com.tony.linktalk.adapter.out.persistence.repository;
 
-import com.tony.linktalk.adapter.out.persistence.entity.MemberEntity;
-import com.tony.linktalk.adapter.out.persistence.entity.RefreshTokenEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.member.MemberEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.member.RefreshTokenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

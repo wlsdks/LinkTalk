@@ -1,7 +1,7 @@
 package com.tony.linktalk.config.security.http.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.tony.linktalk.adapter.out.persistence.entity.MemberEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.member.MemberEntity;
 import com.tony.linktalk.adapter.out.persistence.entity.constant.RoleName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

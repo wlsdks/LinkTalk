@@ -1,4 +1,4 @@
-package com.tony.linktalk.adapter.out.persistence.entity;
+package com.tony.linktalk.adapter.out.persistence.entity.member;
 
 import jakarta.persistence.*;
 import lombok.*;

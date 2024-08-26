@@ -1,5 +1,6 @@
-package com.tony.linktalk.adapter.out.persistence.entity;
+package com.tony.linktalk.adapter.out.persistence.entity.chat;
 
+import com.tony.linktalk.adapter.out.persistence.entity.member.MemberEntity;
 import com.tony.linktalk.adapter.out.persistence.entity.constant.message.ChatMessageStatus;
 import com.tony.linktalk.adapter.out.persistence.entity.constant.message.ChatMessageType;
 import jakarta.persistence.*;

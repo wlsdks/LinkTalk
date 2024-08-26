@@ -1,6 +1,6 @@
 package com.tony.linktalk.adapter.out.persistence.adapter;
 
-import com.tony.linktalk.adapter.out.persistence.entity.MemberEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.member.MemberEntity;
 import com.tony.linktalk.adapter.out.persistence.repository.MemberRepository;
 import com.tony.linktalk.application.port.out.member.CreateMemberPort;
 import com.tony.linktalk.application.port.out.member.DeleteMemberPort;
