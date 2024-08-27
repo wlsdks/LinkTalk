@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 /**
  * 회원
  */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 @Builder
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Member {
 
     private Long id;               // PK

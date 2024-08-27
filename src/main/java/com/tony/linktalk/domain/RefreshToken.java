@@ -11,10 +11,10 @@ import java.util.UUID;
 /**
  * 리프레시 토큰
  */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 @Builder
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class RefreshToken {
 
     private Long id;

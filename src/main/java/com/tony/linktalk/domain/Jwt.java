@@ -8,10 +8,10 @@ import java.util.Collection;
 /**
  * JWT 토큰
  */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 @Builder
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Jwt {
 
     private String accessToken;

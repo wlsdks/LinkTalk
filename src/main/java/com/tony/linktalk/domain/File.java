@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
 /**
  * 파일 정보를 담는 domain 객체
  */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 @Builder
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class File {
 
     private Long id;

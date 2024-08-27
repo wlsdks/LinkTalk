@@ -7,7 +7,6 @@ import org.springframework.util.ObjectUtils;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @Builder
-@Setter
 @Getter
 public class ChatRoom {
 
