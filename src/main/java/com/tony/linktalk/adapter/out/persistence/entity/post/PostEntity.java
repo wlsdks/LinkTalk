@@ -1,6 +1,7 @@
 package com.tony.linktalk.adapter.out.persistence.entity.post;
 
 import com.tony.linktalk.adapter.out.persistence.entity.BaseEntity;
+import com.tony.linktalk.adapter.out.persistence.entity.constant.post.Visibility;
 import com.tony.linktalk.adapter.out.persistence.entity.member.MemberEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,14 +20,27 @@ public class PostEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Embedded
-    private PostMetadata metadata;  // 게시글 메타데이터 (제목, 공개 여부 등)
+    @Column(name = "title", nullable = false)
+    private String title;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "visibility", nullable = false)
+    private Visibility visibility = Visibility.PUBLIC;
+
+    @Column(name = "status")
+    private String status = "active";
+
+    @Column(name = "is_pinned")
+    private Boolean isPinned = false;
 
     @Column(name = "content", nullable = false)
     private String content;  // 게시글 내용
 
-    @Embedded
-    private PostSettings settings;  // 게시글 설정 (댓글 허용 여부 등)
+    @Column(name = "allow_comments")
+    private Boolean allowComments = true;
+
+    @Column(name = "is_shareable")
+    private Boolean isShareable = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
