@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
+@Getter
 @Builder
-@Setter
 public class ChatMessage {
 
     private Long chatMessageId;

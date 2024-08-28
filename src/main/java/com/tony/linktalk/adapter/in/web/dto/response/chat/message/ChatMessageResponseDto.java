@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @Builder
-@Setter
 @Getter
 public class ChatMessageResponseDto {
 
