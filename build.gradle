@@ -37,7 +37,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
 
     // P6spy
-    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.2'
 
     // queryDsl
     implementation 'com.querydsl:querydsl-core:5.0.0'
