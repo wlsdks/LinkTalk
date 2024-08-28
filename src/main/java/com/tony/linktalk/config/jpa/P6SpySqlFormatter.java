@@ -7,14 +7,19 @@ import jakarta.annotation.PostConstruct;
 import org.hibernate.engine.jdbc.internal.FormatStyle;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 @Configuration
 public class P6SpySqlFormatter implements MessageFormattingStrategy {
 
+    private static final String ANSI_RESET = "\u001B[0m";
+    private static final String ANSI_YELLOW = "\u001B[33m";
+    private static final String ANSI_CYAN = "\u001B[36m";
+
     @PostConstruct
     public void setLogMessageFormat() {
-        // Set the custom formatter for P6Spy
         P6SpyOptions.getActiveInstance().setLogMessageFormat(this.getClass().getName());
     }
 
@@ -25,15 +30,17 @@ public class P6SpySqlFormatter implements MessageFormattingStrategy {
         }
 
         String formattedSql = formatSql(category, sql);
+        String stackTrace = createStackTrace(3);  // 애플리케이션 호출 스택의 마지막 3줄을 가져옴
 
         return String.format(
-                """
-                Time: %s | Category: %s | Elapsed: %d ms
-                JPA QUERY START: ◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼
+                ANSI_CYAN + """
+                시간: %s | 카테고리: %s | 소요 시간: %d ms
+                JPA 쿼리 시작: ◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼
                 %s \n
-                JPA QUERY END: ◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼
-                """,
-                now, category.toUpperCase(Locale.ROOT), elapsed, formattedSql
+                JPA 쿼리 끝: ◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼
+                %s
+                """ + ANSI_RESET,
+                now, category.toUpperCase(Locale.ROOT), elapsed, formattedSql, stackTrace
         );
     }
 
@@ -49,12 +56,50 @@ public class P6SpySqlFormatter implements MessageFormattingStrategy {
         if (Category.STATEMENT.getName().equals(category)) {
             String trimmedSql = sql.trim().toLowerCase(Locale.ROOT);
             if (trimmedSql.startsWith("create") || trimmedSql.startsWith("alter") || trimmedSql.startsWith("comment")) {
-                return FormatStyle.DDL.getFormatter().format(sql); // Format DDL statements
+                return FormatStyle.DDL.getFormatter().format(sql); // DDL 문을 포맷
             } else {
-                return FormatStyle.BASIC.getFormatter().format(sql); // Format basic SQL statements
+                return FormatStyle.BASIC.getFormatter().format(sql); // 기본 SQL 문을 포맷
             }
         }
         return sql;
     }
 
+    /**
+     * 스택 트레이스를 생성하고, 시스템 호출을 제외하고 애플리케이션 호출만 포함
+     * @param maxLines 최대 포함할 스택 트레이스 줄 수
+     * @return 필터링된 스택 트레이스 문자열
+     */
+    private String createStackTrace(int maxLines) {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        StringBuilder sb = new StringBuilder("\nCall Stack:");
+        int count = 0;
+
+        // 가장 깊은 스택부터 탐색하고, 시스템 호출을 건너뜀
+        for (int i = stackTrace.length - 1; i >= 0 && count < maxLines; i--) {
+            String trace = stackTrace[i].toString();
+            // 시스템 호출을 제외하고 애플리케이션 관련 호출만 필터링
+            if (!isSystemCall(trace) && trace.startsWith("com.tony.linktalk") && !isFilterDenied(trace)) {
+                sb.append("\n\t").append(++count).append(". ").append(trace);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 시스템 호출을 감지하는 메서드
+     * @param trace 스택 트레이스의 한 줄
+     * @return 시스템 호출 여부
+     */
+    private boolean isSystemCall(String trace) {
+        return trace.startsWith("java.base") ||
+                trace.startsWith("org.apache.catalina") ||
+                trace.startsWith("org.apache.tomcat") ||
+                trace.startsWith("org.apache.coyote") ||
+                trace.startsWith("org.springframework");
+    }
+
+    private boolean isFilterDenied(String trace) {
+        List<String> DENIED_FILTER = Arrays.asList("Test1", this.getClass().getSimpleName());
+        return DENIED_FILTER.contains(trace);
+    }
 }
