@@ -56,7 +56,11 @@ public enum ErrorCode {
     UNAUTHORIZED("UNAUTHORIZED", "Unauthorized"),
     AUTHENTICATION_ERROR("AUTHENTICATION_ERROR", "Authentication error"),
     PRINCIPAL_CAST_ERROR("PRINCIPAL_CAST_ERROR", "Principal cast error"),
-    SECURITY_USER_NOT_FOUND("SEC001", "Security user not found"),;
+    SECURITY_USER_NOT_FOUND("SEC001", "Security user not found"),
+    PASSWORD_IS_NOT_HANDLE_IN_SECURITY_USER_DETAILS("SEC002", "Password is not handle in security user details"),
+
+
+    ;
 
     private final String code;
     private final String message;
