@@ -1,6 +1,5 @@
 package com.tony.linktalk.config.security.http;
 
-import com.tony.linktalk.config.security.http.exception.AuthenticationEntryPointImpl;
 import com.tony.linktalk.config.security.http.filter.JwtTokenFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
