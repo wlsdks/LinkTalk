@@ -21,14 +21,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Spring Security 설정 클래스
- * 웹 보안 구성을 정의합니다.
+ * Spring Security 설정 클래스: 웹 보안 구성을 정의
  */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @AllArgsConstructor
-@Profile("!test") // "test" 프로파일이 아닌 경우에만 활성화
+@Profile("!test") // "test" 프로파일이 아닌 경우에만 활성화 (테스트 코드에서는 전용 설정이 있음)
 public class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
@@ -37,21 +36,20 @@ public class SecurityConfig {
 
 
     /**
-     * DAO 인증 제공자 설정. (기본 로그인 인증)
+     * @return DaoAuthenticationProvider
+     * @apiNote DAO 인증 제공자 설정. (기본 로그인 인증)
      * DaoAuthenticationProvider는 AuthenticationManager의 구성 요소 중 하나로, 실제 사용자 인증을 수행하는 역할을 합니다.
      * DaoAuthenticationProvider는 retrieveUser 메서드를 사용하여 UserDetailsService.loadUserByUsername을 호출합니다.
      * retrieveUser 메서드에서 첫번째 매게변수인 username은 UsernamePasswordAuthenticationToken을 생성할때 담아준 첫번째 매개변수(이메일)가 전달됩니다.
      * new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()) -> (principal, credentials)
-     *
+     * <br>
      * <p>
-     * 1. retrieveUser 메서드를 통해 사용자를 로드합니다.
-     * 2. additionalAuthenticationChecks 메서드를 통해 비밀번호를 검증합니다.
-     * 3. 비밀번호가 일치하면 createSuccessAuthentication 메서드를 호출하여 인증된 UsernamePasswordAuthenticationToken 객체를 생성합니다
-     * 4. 생성된 UsernamePasswordAuthenticationToken 객체는 principal로 UserDetailsImpl 객체를 설정합니다.
-     * 5. 로그인 할때 generateToken 메서드로 JWT 토큰을 생성할때 사용자 정보를 가져오기 위해 authentication.getPrincipal() 메서드를 호출합니다.
+     * 1. retrieveUser 메서드를 통해 사용자를 로드합니다. <br>
+     * 2. additionalAuthenticationChecks 메서드를 통해 비밀번호를 검증합니다. <br>
+     * 3. 비밀번호가 일치하면 createSuccessAuthentication 메서드를 호출하여 인증된 UsernamePasswordAuthenticationToken 객체를 생성합니다 <br>
+     * 4. 생성된 UsernamePasswordAuthenticationToken 객체는 principal로 UserDetailsImpl 객체를 설정합니다. <br>
+     * 5. 로그인 할때 generateToken 메서드로 JWT 토큰을 생성할때 사용자 정보를 가져오기 위해 authentication.getPrincipal() 메서드를 호출합니다. <br>
      * </p>
-     *
-     * @return DaoAuthenticationProvider
      */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -63,14 +61,13 @@ public class SecurityConfig {
 
 
     /**
-     * 인증 관리자 설정. (Provider 지정 및 인증 처리)
-     * AuthenticationManager는 여러 AuthenticationProvider를 사용하여 인증을 처리할 수 있는 중앙 관리자입니다.
-     * 지금은 provider로 DaoAuthenticationProvider를 사용하고 있습니다.
-     * 그래서 AuthenticationManager.authenticate 메서드가 호출되면 내부적으로 DaoAuthenticationProvider.authenticate를 호출합니다.
-     *
      * @param authenticationConfiguration 인증 구성 객체
      * @return AuthenticationManager
      * @throws Exception 예외
+     * @apiNote 인증 관리자 설정. (Provider 지정 및 인증 처리) <br>
+     * AuthenticationManager는 여러 AuthenticationProvider를 사용하여 인증을 처리할 수 있는 중앙 관리자입니다.
+     * 지금은 provider로 DaoAuthenticationProvider를 사용하고 있습니다. <br>
+     * 그래서 AuthenticationManager.authenticate 메서드가 호출되면 내부적으로 DaoAuthenticationProvider.authenticate를 호출합니다.
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -79,9 +76,8 @@ public class SecurityConfig {
 
 
     /**
-     * 비밀번호 인코더 설정.
-     *
      * @return PasswordEncoder
+     * @apiNote 비밀번호 인코더 설정. (BCryptPasswordEncoder)
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -90,23 +86,22 @@ public class SecurityConfig {
 
 
     /**
-     * 보안 필터 체인 설정.
-     *
      * @param http HttpSecurity 객체
      * @return SecurityFilterChain
      * @throws Exception 예외
+     * @apiNote 보안 필터 체인 설정. (spring security 설정)
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)                                     // CSRF 보호 비활성화
-                .exceptionHandling(e -> e.authenticationEntryPoint(jwtEntryPoint)) // 인증 예외 처리
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 상태 비저장 설정
+        http.csrf(AbstractHttpConfigurer::disable)                                 // CSRF 보호 비활성화
+                .exceptionHandling(e -> e.authenticationEntryPoint(jwtEntryPoint)) // 인증 예외 처리 (custom 예외 처리: JwtEntryPoint 클래스)
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 상태 비저장 설정 (JWT 토큰 사용)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/member/**").permitAll()            // 인증 없이 접근 가능한 경로 설정
-                        .anyRequest().authenticated();                                 // 나머지 요청은 인증 필요
+                    auth.requestMatchers("/member/**").permitAll()               // 인증 없이 접근 가능한 경로 설정
+                            .anyRequest().authenticated();                         // 나머지 요청은 인증 필요
                 })
-                .authenticationProvider(authenticationProvider())                      // DaoAuthenticationProvider를 인증 제공자로 설정
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class); // JWT 토큰 필터 설정
+                .authenticationProvider(authenticationProvider())                  // DaoAuthenticationProvider를 인증 제공자로 설정 (커스텀 로그인 인증)
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class); // JWT 토큰 필터 추가 (UsernamePasswordAuthenticationFilter 앞에 위치)
 
         return http.build();
     }
