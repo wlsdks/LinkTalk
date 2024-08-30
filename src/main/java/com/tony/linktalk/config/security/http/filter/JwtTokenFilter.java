@@ -1,5 +1,6 @@
 package com.tony.linktalk.config.security.http.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tony.linktalk.config.security.http.exception.JwtAuthenticationException;
 import com.tony.linktalk.util.JwtTokenProvider;
 import io.jsonwebtoken.JwtException;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +22,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * JWT 토큰 필터링 클래스
@@ -34,6 +37,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * @param request     HttpServletRequest 객체
@@ -67,6 +71,18 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             // 4. JWT에 문제가 없다면 사용자 인증 정보 설정
             authenticationFrom(jwt);
 
+        } catch (JwtAuthenticationException e) {
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+            Map<String, Object> body = Map.of(
+                    "status", HttpServletResponse.SC_UNAUTHORIZED,
+                    "error", "Unauthorized",
+                    "message", e.getMessage(),
+                    "path", request.getServletPath()
+            );
+
+            mapper.writeValue(response.getOutputStream(), body);
         } catch (JwtException e) {
             log.warn("JWT processing failed: {}", e.getMessage());
             throw new JwtAuthenticationException("Invalid JWT token", e);
