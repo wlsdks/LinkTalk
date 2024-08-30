@@ -1,6 +1,5 @@
 package com.tony.linktalk.config.websocket;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tony.linktalk.adapter.in.web.dto.request.chat.message.ChatMessageRequestDto;
 import com.tony.linktalk.application.command.chat.message.CreateChatMessageCommand;
@@ -170,7 +169,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     /**
      * @param chatWebSocketMessage ChatWebSocketMessage
-     * @throws JsonProcessingException JsonProcessingException
      * @apiNote 채팅 메시지를 받아서 변환한 다음 저장한다.
      */
     private void saveChatMessage(ChatWebSocketMessage chatWebSocketMessage) {
@@ -194,19 +192,29 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      */
     private Long extractChatRoomIdFrom(WebSocketSession session) {
         Object chatRoomId = session.getAttributes().get("chatRoomId");
-        if (chatRoomId == null) {
-            log.error("Chat room ID is null");
-            return null;
-        }
-        if (chatRoomId instanceof Long) {
-            return (Long) chatRoomId;
-        } else if (chatRoomId instanceof String) {
-            try {
-                return Long.parseLong((String) chatRoomId);
-            } catch (NumberFormatException e) {
-                log.error("Chat room ID is not a valid Long value: {}", chatRoomId);
+
+        switch (chatRoomId) {
+            case null -> {
+                log.error("Chat room ID is null");
+                return null;
+            }
+
+            case Long l -> {
+                return l;
+            }
+
+            case String string -> {
+                try {
+                    return Long.parseLong((String) chatRoomId);
+                } catch (NumberFormatException e) {
+                    log.error("Chat room ID is not a valid Long value: {}", chatRoomId);
+                }
+            }
+
+            default -> {
             }
         }
+
         log.error("Chat room ID is not of type Long or String");
         return null;
     }
@@ -217,21 +225,31 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      * @return 수신자 ID
      * @apiNote 세션에서 수신자 ID를 가져옵니다. (jwtHandshakeInterceptor에서 설정한 속성)
      */
-    private static Long extractReceiverIdFrom(WebSocketSession session) {
+    private Long extractReceiverIdFrom(WebSocketSession session) {
         Object memberId = session.getAttributes().get("memberId");
-        if (memberId == null) {
-            log.error("Receiver ID is null");
-            return null;
-        }
-        if (memberId instanceof Long) {
-            return (Long) memberId;
-        } else if (memberId instanceof String) {
-            try {
-                return Long.parseLong((String) memberId);
-            } catch (NumberFormatException e) {
-                log.error("Receiver ID is not a valid Long value: {}", memberId);
+
+        switch (memberId) {
+            case null -> {
+                log.error("Receiver ID is null");
+                return null;
+            }
+
+            case Long l -> {
+                return l;
+            }
+
+            case String string -> {
+                try {
+                    return Long.parseLong((String) memberId);
+                } catch (NumberFormatException e) {
+                    log.error("Receiver ID is not a valid Long value: {}", memberId);
+                }
+            }
+
+            default -> {
             }
         }
+
         log.error("Receiver ID is not of type Long or String");
         return null;
     }

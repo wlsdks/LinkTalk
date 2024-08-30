@@ -2,9 +2,9 @@ package com.tony.linktalk.config.websocket;
 
 import com.tony.linktalk.util.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,6 @@ import java.util.Map;
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final DataSourceTransactionManagerAutoConfiguration dataSourceTransactionManagerAutoConfiguration;
 
     // todo: 클라인언트 예시: const socket = new WebSocket('ws://localhost:8080/chat?token=your-jwt-token&chatRoomId=12345');
 
@@ -36,10 +35,10 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
      */
     @Override
     public boolean beforeHandshake(
-            ServerHttpRequest request,
-            ServerHttpResponse response,
-            WebSocketHandler wsHandler,
-            Map<String, Object> attributes // WebSocketSession.getAttributes() 으로 접근 가능
+            @NonNull ServerHttpRequest request,
+            @NonNull ServerHttpResponse response,
+            @NonNull WebSocketHandler wsHandler,
+            @NonNull Map<String, Object> attributes // WebSocketSession.getAttributes() 으로 접근 가능
     ) throws Exception {
         // WebSocket 연결 시, JWT 토큰을 추출하여 유효성 검사
         String query = request.getURI().getQuery();
@@ -56,6 +55,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
             Long memberId = jwtTokenProvider.getMemberIdFromJwtToken(token);
             String email = claims.getSubject();
 
+            // 속성에 사용자 정보 추가
             attributes.put("email", email);
             attributes.put("memberId", memberId);
             attributes.put("nickname", claims.get("nickname", String.class));
@@ -68,17 +68,18 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
             System.out.println("Extracted chatRoomId: " + chatRoomId);
 
+            // 채팅방 ID가 존재하는 경우 속성에 추가
             if (chatRoomId != null) {
                 attributes.put("chatRoomId", Long.parseLong(chatRoomId));
                 System.out.println("Stored chatRoomId in attributes: " + attributes.get("chatRoomId"));
             }
 
             System.out.println("attributes: " + attributes);
-
             return true;
         }
 
-        return false; // JWT가 유효하지 않으면 핸드셰이크 거부
+        // JWT가 유효하지 않으면 핸드셰이크 거부
+        return false;
     }
 
 
@@ -90,7 +91,12 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
      * @apiNote WebSocket 연결 후 처리
      */
     @Override
-    public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
+    public void afterHandshake(
+            @NonNull ServerHttpRequest request,
+            @NonNull ServerHttpResponse response,
+            @NonNull WebSocketHandler wsHandler,
+            Exception exception
+    ) {
         // Do nothing
     }
 

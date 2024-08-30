@@ -5,18 +5,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 /**
  * 웹소켓 설정을 위한 클래스
  */
 @RequiredArgsConstructor
-@Configuration
 @EnableWebSocket
+@Configuration
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    private final ChatWebSocketHandler chatWebSocketHandler;
-    private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
+    private final TextWebSocketHandler chatWebSocketHandler; // ChatWebSocketHandler
+    private final HandshakeInterceptor jwtHandshakeInterceptor; // JwtHandshakeInterceptor
 
     /**
      * @param registry WebSocketHandlerRegistry
