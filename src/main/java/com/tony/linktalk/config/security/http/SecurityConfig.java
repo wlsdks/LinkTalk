@@ -1,6 +1,6 @@
 package com.tony.linktalk.config.security.http;
 
-import com.tony.linktalk.config.security.http.exception.JwtEntryPoint;
+import com.tony.linktalk.config.security.http.exception.AuthenticationEntryPointImpl;
 import com.tony.linktalk.config.security.http.filter.JwtTokenFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -31,8 +32,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
-    private final JwtEntryPoint jwtEntryPoint;
     private final JwtTokenFilter jwtTokenFilter;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
 
     /**
@@ -90,11 +91,12 @@ public class SecurityConfig {
      * @return SecurityFilterChain
      * @throws Exception 예외
      * @apiNote 보안 필터 체인 설정. (spring security 설정)
+     * 필터 체인에서 JWT를 parsing하는 도중 예외가 발생하면 JwtEntryPoint가 호출되어 예외처리가 된다.
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)                                 // CSRF 보호 비활성화
-                .exceptionHandling(e -> e.authenticationEntryPoint(jwtEntryPoint)) // 인증 예외 처리 (custom 예외 처리: JwtEntryPoint 클래스)
+                .exceptionHandling(e -> e.authenticationEntryPoint(authenticationEntryPoint)) // 인증 예외 처리 (custom 예외 처리: AuthenticationEntryPointImpl 클래스)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 상태 비저장 설정 (JWT 토큰 사용)
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/member/**").permitAll()               // 인증 없이 접근 가능한 경로 설정

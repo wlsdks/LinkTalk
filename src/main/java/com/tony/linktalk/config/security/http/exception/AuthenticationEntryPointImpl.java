@@ -13,22 +13,23 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * 인증 예외처리 클래스
- * 인증되지 않은 사용자가 보안 HTTP 리소스를 요청하고 AuthenticationException이 발생할 때마다 트리거됩니다.
+ * security 인증 예외 처리 클래스 (filterChain으로 이 클래스를 등록해서 사용)
+ * 이 클래스는 인증되지 않은 요청이 들어왔을 때, HTTP 401 Unauthorized 응답을 생성하는 역할을 한다.
+ * Spring Security 설정에서 AuthenticationEntryPoint로 등록되어 있으므로, 인증 과정에서 JwtAuthenticationException과 같은 AuthenticationException이 발생하면 이 클래스의 commence 메서드가 호출된다.
+ * commence 메서드는 JSON 형식으로 응답을 반환하며, 클라이언트에게 적절한 에러 메시지를 전달한다.
  */
 @Slf4j
 @Component
-public class JwtEntryPoint implements AuthenticationEntryPoint {
+public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
     /**
-     * 인증되지 않은 요청에 대한 처리 메서드.
-     *
      * @param request       HttpServletRequest 객체
      * @param response      HttpServletResponse 객체
      * @param authException 발생한 인증 예외
      * @throws IOException 입출력 예외가 발생할 때
+     * @apiNote 인증되지 않은 요청에 대한 처리 메서드. (AuthenticationEntryPoint 인터페이스의 commence 메서드 구현)
      */
     @Override
     public void commence(
@@ -38,6 +39,7 @@ public class JwtEntryPoint implements AuthenticationEntryPoint {
     ) throws IOException {
         // 1. 응답의 콘텐츠 타입을 JSON으로 설정
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
         // 2. 응답 상태 코드를 401 Unauthorized로 설정
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
