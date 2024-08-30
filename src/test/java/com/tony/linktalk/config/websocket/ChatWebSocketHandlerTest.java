@@ -3,7 +3,7 @@ package com.tony.linktalk.config.websocket;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tony.linktalk.adapter.out.persistence.entity.constant.message.ChatMessageType;
 import com.tony.linktalk.application.port.in.chat.message.CreateChatMessageUseCase;
-import com.tony.linktalk.config.websocket.dto.ChatWebSocketMessage;
+import com.tony.linktalk.config.websocket.dto.ChatWebSocketMessageDto;
 import com.tony.linktalk.util.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -102,7 +102,7 @@ class ChatWebSocketHandlerTest {
 
         // 테스트 메시지 전송
         String testMessageContent = "Hello, this is a test message";
-        String jsonMessage = objectMapper.writeValueAsString(ChatWebSocketMessage.of(
+        String jsonMessage = objectMapper.writeValueAsString(ChatWebSocketMessageDto.of(
                 ChatMessageType.TEXT, 1L, 1L, testMessageContent
         ));
         session.sendMessage(new TextMessage(jsonMessage));
@@ -217,7 +217,7 @@ class ChatWebSocketHandlerTest {
 
         // 파일 전송 메시지 전송
         String fileMessageContent = "file.txt";
-        String jsonMessage = objectMapper.writeValueAsString(ChatWebSocketMessage.of(
+        String jsonMessage = objectMapper.writeValueAsString(ChatWebSocketMessageDto.of(
                 ChatMessageType.FILE, 1L, 1L, fileMessageContent
         ));
         session.sendMessage(new TextMessage(jsonMessage));

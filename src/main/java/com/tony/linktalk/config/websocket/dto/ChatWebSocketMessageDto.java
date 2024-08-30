@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Getter
-public class ChatWebSocketMessage {
+public class ChatWebSocketMessageDto {
 
     private ChatMessageType chatMessageType;
     private Long chatRoomId;
@@ -16,8 +16,8 @@ public class ChatWebSocketMessage {
     private String content; // 메시지 내용 또는 파일 URL
 
     // factory method
-    public static ChatWebSocketMessage of(ChatMessageType chatMessageType, long chatRoomId, long senderId, String testMessageContent) {
-        return ChatWebSocketMessage.builder()
+    public static ChatWebSocketMessageDto of(ChatMessageType chatMessageType, long chatRoomId, long senderId, String testMessageContent) {
+        return ChatWebSocketMessageDto.builder()
                 .chatMessageType(chatMessageType)
                 .chatRoomId(chatRoomId)
                 .senderId(senderId)
@@ -26,8 +26,8 @@ public class ChatWebSocketMessage {
     }
 
     // factory method
-    public static ChatWebSocketMessage of(String payload) {
-        return ChatWebSocketMessage.builder()
+    public static ChatWebSocketMessageDto of(String payload) {
+        return ChatWebSocketMessageDto.builder()
                 .content(payload)
                 .chatMessageType(ChatMessageType.TEXT)
                 .build();

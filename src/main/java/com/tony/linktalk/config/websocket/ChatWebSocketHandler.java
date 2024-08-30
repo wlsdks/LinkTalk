@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tony.linktalk.adapter.in.web.dto.request.chat.message.ChatMessageRequestDto;
 import com.tony.linktalk.application.command.chat.message.CreateChatMessageCommand;
 import com.tony.linktalk.application.port.in.chat.message.CreateChatMessageUseCase;
-import com.tony.linktalk.config.websocket.dto.ChatWebSocketMessage;
+import com.tony.linktalk.config.websocket.dto.ChatWebSocketMessageDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,13 +67,13 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         try {
-            // 수신된 메시지를 ChatWebSocketMessage 객체로 변환
+            // 수신된 메시지를 ChatWebSocketMessageDto 객체로 변환
             String payload = message.getPayload();
-            ChatWebSocketMessage chatWebSocketMessage;
+            ChatWebSocketMessageDto chatWebSocketMessageDto;
 
             try {
                 // 여기서 메시지를 파싱하며 잘못된 형식일 경우 예외를 발생시킴
-                chatWebSocketMessage = objectMapper.readValue(payload, ChatWebSocketMessage.class);
+                chatWebSocketMessageDto = objectMapper.readValue(payload, ChatWebSocketMessageDto.class);
             } catch (Exception e) {
                 // 메시지 형식이 올바르지 않으면 예외를 처리하고 클라이언트에 오류 메시지 전송
                 log.error("Invalid message format: {}", payload, e);
@@ -87,21 +87,21 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             Long receiverId = extractReceiverIdFrom(session);
 
             // ChatWebSocketMessage에 채팅방 ID, 수신자 ID 설정
-            chatWebSocketMessage.changeChatRoomId(chatRoomId);
-            chatWebSocketMessage.changeReceiverId(receiverId);
+            chatWebSocketMessageDto.changeChatRoomId(chatRoomId);
+            chatWebSocketMessageDto.changeReceiverId(receiverId);
 
             // 메시지 타입에 따른 처리
-            String broadcastMessage = switch (chatWebSocketMessage.getChatMessageType()) {
-                case TEXT -> chatWebSocketMessage.getContent() + " from " + nickname;
-                case FILE -> "파일이 전송되었습니다: " + chatWebSocketMessage.getContent();
-                case IMAGE -> "이미지가 전송되었습니다: " + chatWebSocketMessage.getContent();
-                case VIDEO -> "비디오가 전송되었습니다: " + chatWebSocketMessage.getContent();
-                case AUDIO -> "오디오가 전송되었습니다: " + chatWebSocketMessage.getContent();
+            String broadcastMessage = switch (chatWebSocketMessageDto.getChatMessageType()) {
+                case TEXT -> chatWebSocketMessageDto.getContent() + " from " + nickname;
+                case FILE -> "파일이 전송되었습니다: " + chatWebSocketMessageDto.getContent();
+                case IMAGE -> "이미지가 전송되었습니다: " + chatWebSocketMessageDto.getContent();
+                case VIDEO -> "비디오가 전송되었습니다: " + chatWebSocketMessageDto.getContent();
+                case AUDIO -> "오디오가 전송되었습니다: " + chatWebSocketMessageDto.getContent();
                 default -> "알 수 없는 메시지 타입입니다.";
             };
 
             // 메시지를 DB에 저장
-            saveChatMessage(chatWebSocketMessage);
+            saveChatMessage(chatWebSocketMessageDto);
 
             // DM인지 확인하여 수신자에게만 전송
             sendMessageToReceiver(broadcastMessage);
@@ -168,12 +168,12 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     }
 
     /**
-     * @param chatWebSocketMessage ChatWebSocketMessage
+     * @param chatWebSocketMessageDto ChatWebSocketMessageDto
      * @apiNote 채팅 메시지를 받아서 변환한 다음 저장한다.
      */
-    private void saveChatMessage(ChatWebSocketMessage chatWebSocketMessage) {
+    private void saveChatMessage(ChatWebSocketMessageDto chatWebSocketMessageDto) {
         // ChatMessageResponseDto로 변환
-        ChatMessageRequestDto chatMessageRequestDto = ChatMessageRequestDto.of(chatWebSocketMessage);
+        ChatMessageRequestDto chatMessageRequestDto = ChatMessageRequestDto.of(chatWebSocketMessageDto);
 
         // CreateChatMessageCommand로 변환
         CreateChatMessageCommand command = CreateChatMessageCommand.of(chatMessageRequestDto);

@@ -2,7 +2,7 @@ package com.tony.linktalk.adapter.in.web.dto.request.chat.message;
 
 import com.tony.linktalk.adapter.out.persistence.entity.constant.message.ChatMessageStatus;
 import com.tony.linktalk.adapter.out.persistence.entity.constant.message.ChatMessageType;
-import com.tony.linktalk.config.websocket.dto.ChatWebSocketMessage;
+import com.tony.linktalk.config.websocket.dto.ChatWebSocketMessageDto;
 import lombok.*;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -20,13 +20,13 @@ public class ChatMessageRequestDto {
     private ChatMessageStatus chatMessageStatus;
 
     // factory method
-    public static ChatMessageRequestDto of(ChatWebSocketMessage chatWebSocketMessage) {
+    public static ChatMessageRequestDto of(ChatWebSocketMessageDto chatWebSocketMessageDto) {
         return ChatMessageRequestDto.builder()
-                .chatRoomId(chatWebSocketMessage.getChatRoomId())
-                .senderId(chatWebSocketMessage.getSenderId())
-                .receiverId(chatWebSocketMessage.getReceiverId())
-                .content(chatWebSocketMessage.getContent())
-                .chatMessageType(chatWebSocketMessage.getChatMessageType())
+                .chatRoomId(chatWebSocketMessageDto.getChatRoomId())
+                .senderId(chatWebSocketMessageDto.getSenderId())
+                .receiverId(chatWebSocketMessageDto.getReceiverId())
+                .content(chatWebSocketMessageDto.getContent())
+                .chatMessageType(chatWebSocketMessageDto.getChatMessageType())
                 .chatMessageStatus(ChatMessageStatus.SENT)
                 .build();
     }
