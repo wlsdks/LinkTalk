@@ -54,6 +54,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+
+        String requestURI = request.getRequestURI();
+
+        // 특정 경로를 필터링에서 제외 (config에서 제외 불가능하기에 여기서 처리)
+        if (requestURI.equals("/member/auth/signUp") || requestURI.equals("/member/auth/signIn")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             // 1. JWT 토큰을 요청에서 추출
             String jwt = parseJwt(request);
