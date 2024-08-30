@@ -1,7 +1,6 @@
 package com.tony.linktalk.config.security;
 
 import com.tony.linktalk.config.security.http.filter.JwtTokenFilter;
-import com.tony.linktalk.config.security.http.user.UserDetailsImpl;
 import com.tony.linktalk.config.security.http.user.UserDetailsServiceImpl;
 import com.tony.linktalk.util.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +12,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Profile("test") // "test" 프로파일에만 적용
 public class TestSecurityConfig {
 
-    private final UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     public TestSecurityConfig(UserDetailsServiceImpl userDetailsService) {
         this.userDetailsService = userDetailsService;

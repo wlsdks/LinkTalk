@@ -12,12 +12,12 @@ public enum ErrorCode {
     MEMBER_ALREADY_EXISTS("MEM002", "User already exists"),
     INVALID_USER_ID("MEM003", "Invalid user ID"),
     INVALID_USER_NAME("MEM004", "Invalid user name"),
-    INVALID_USER_EMAIL("MEM005", "Invalid user email"),
+    INVALID_USER_EMAIL("MEM005", "Invalid user getEmail"),
     INVALID_USER_PHONE("MEM006", "Invalid user phone"),
 
     // error codes for unexpected errors
     UNEXPECTED_ERROR("ERR001", "Unexpected error"),
-    CHANGE_EMAIL_VALUE_NOT_FOUND("ERR002", "Change email value not found"),
+    CHANGE_EMAIL_VALUE_NOT_FOUND("ERR002", "Change getEmail value not found"),
     MEMBER_JWT_ALREADY_EXIST("ERR003", "Member JWT already exist"),
     MEMBER_REQUIRED_VALUE("MEM007", "Member required value"),
 
@@ -35,9 +35,9 @@ public enum ErrorCode {
 
 
     // member errors
-    MEMBER_EMAIL_NOT_MATCH("MEM008", "Member email not match"),
-    MEMBER_INNER_EMAIL_NOT_FOUND("MEM009", "Member inner email not found"),
-    MEMBER_EMAIL_PARAM_NOT_FOUND("MEM010", "Member email param not found"),
+    MEMBER_EMAIL_NOT_MATCH("MEM008", "Member getEmail not match"),
+    MEMBER_INNER_EMAIL_NOT_FOUND("MEM009", "Member inner getEmail not found"),
+    MEMBER_EMAIL_PARAM_NOT_FOUND("MEM010", "Member getEmail param not found"),
 
 
     // file errors
@@ -55,10 +55,8 @@ public enum ErrorCode {
     // security errors
     UNAUTHORIZED("UNAUTHORIZED", "Unauthorized"),
     AUTHENTICATION_ERROR("AUTHENTICATION_ERROR", "Authentication error"),
-    PRINCIPAL_CAST_ERROR("PRINCIPAL_CAST_ERROR", "Principal cast error")
-
-
-    ;
+    PRINCIPAL_CAST_ERROR("PRINCIPAL_CAST_ERROR", "Principal cast error"),
+    SECURITY_USER_NOT_FOUND("SEC001", "Security user not found"),;
 
     private final String code;
     private final String message;
