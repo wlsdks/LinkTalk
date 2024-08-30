@@ -54,10 +54,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             // 1. JWT 토큰을 요청에서 추출
             String jwt = parseJwt(request);
 
-            // 2. JWT 토큰이 유효한 경우만 처리
-            if (StringUtils.hasText(jwt) && jwtTokenProvider.validateJwtToken(jwt)) {
-                authenticationFrom(jwt);
+            // 2. JWT 토큰이 없는 경우 예외 처리
+            if (notHasJwtToken(jwt)) {
+                throw new JwtAuthenticationException("JWT token is missing");
             }
+
+            // 3. JWT 토큰이 유효한 경우, 사용자 인증 정보 설정
+            if (notValidJwtToken(jwt)) {
+                throw new JwtAuthenticationException("Invalid JWT token");
+            }
+
+            // 4. JWT에 문제가 없다면 사용자 인증 정보 설정
+            authenticationFrom(jwt);
+
         } catch (JwtException e) {
             log.warn("JWT processing failed: {}", e.getMessage());
             throw new JwtAuthenticationException("Invalid JWT token", e);
@@ -90,6 +99,26 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         // 3. JWT 토큰이 없는 경우 null 반환
         return null;
+    }
+
+
+    /**
+     * @param jwt JWT 토큰 문자열
+     * @return JWT 토큰이 없는 경우 true, 있는 경우 false
+     * @apiNote JWT 토큰이 없는 경우를 확인하는 메서드
+     */
+    private boolean notHasJwtToken(String jwt) {
+        return !StringUtils.hasText(jwt);
+    }
+
+
+    /**
+     * @param jwt JWT 토큰 문자열
+     * @return JWT 토큰이 유효하지 않은 경우 true, 유효한 경우 false
+     * @apiNote JWT 토큰이 유효하지 않은 경우를 확인하는 메서드
+     */
+    private boolean notValidJwtToken(String jwt) {
+        return !jwtTokenProvider.validateJwtToken(jwt);
     }
 
 
