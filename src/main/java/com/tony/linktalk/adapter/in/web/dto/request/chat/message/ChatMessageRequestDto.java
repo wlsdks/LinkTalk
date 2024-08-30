@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @Builder
-@Setter
+
 @Getter
 public class ChatMessageRequestDto {
 
