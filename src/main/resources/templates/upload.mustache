@@ -1,0 +1,44 @@
+{{< layout}}
+
+    <div class="container">
+        <div class="upload-container">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" id="fileInput" name="file" class="form-control">
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 LinkTalk. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            const urlParams = new URLSearchParams(window.location.search);
+            const chatRoomId = urlParams.get('chatRoomId'); // URL 파라미터에서 chatRoomId를 가져옴
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('chatRoomId', chatRoomId);
+            formData.append('userId', '123'); // 실제 사용자 ID로 대체해야 함
+
+            fetch('/files/upload', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+                },
+                body: formData
+            })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('File uploaded successfully:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error uploading file:', error);
+                    });
+        });
+    </script>
+
+{{/layout}}

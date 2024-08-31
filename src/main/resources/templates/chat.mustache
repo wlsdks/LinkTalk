@@ -1,0 +1,50 @@
+{{< layout}}
+
+    <div class="container">
+        <div class="chat-container">
+            <div class="chat-window">
+                <div id="messages"></div>
+                <input type="text" id="messageInput" placeholder="Type your message here..." class="form-control">
+                <button id="sendMessageButton" class="btn btn-success">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 LinkTalk. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const chatRoomId = urlParams.get('chatRoomId');  // URL 파라미터에서 chatRoomId를 가져옴
+
+            const token = localStorage.getItem('jwtToken');  // JWT 토큰을 로컬 스토리지에서 가져옴
+
+            const socket = new WebSocket(`ws://localhost:8080/ws/chat?chatRoomId=${chatRoomId}`);
+
+            socket.onopen = function () {
+                console.log('Connected to the chat server');
+                socket.send(JSON.stringify({
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }));
+            };
+
+            socket.onmessage = function (event) {
+                const messageElement = document.createElement('div');
+                messageElement.textContent = event.data;
+                document.getElementById('messages').appendChild(messageElement);
+            };
+
+            document.getElementById('sendMessageButton').addEventListener('click', function () {
+                const messageInput = document.getElementById('messageInput');
+                const message = messageInput.value;
+                socket.send(message);
+                messageInput.value = '';
+            });
+        });
+    </script>
+
+{{/layout}}

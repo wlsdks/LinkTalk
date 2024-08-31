@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<nav class="navbar">
+    <a href="/" class="navbar-brand">LinkTalk</a>
+    <ul class="navbar-nav">
+        {{#isAuthenticated}}
+            <li class="nav-item"><a href="/member/auth/signOut" class="nav-link">Logout</a></li>
+        {{/isAuthenticated}}
+        {{^isAuthenticated}}
+            <li class="nav-item"><a href="/member/login" class="nav-link">Login</a></li>
+            <li class="nav-item"><a href="/member/signUp" class="nav-link">Sign Up</a></li>
+        {{/isAuthenticated}}
+    </ul>
+</nav>
+
+<div class="container">
+    <!-- 여기서 content 변수를 제거하거나 기본 콘텐츠를 설정 -->
+    <p>여기에 기본 콘텐츠를 설정하세요.</p>
+</div>
+
+<footer>
+    <p>&copy; 2024 LinkTalk. All rights reserved.</p>
+</footer>
+</body>
+</html>

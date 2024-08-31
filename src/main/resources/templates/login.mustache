@@ -1,0 +1,33 @@
+{{> layout}}
+
+<div class="login-container">
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="Username" class="form-control" required>
+        <input type="password" id="password" placeholder="Password" class="form-control" required>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        fetch('/member/auth/signIn', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({username, password})
+        })
+                .then(response => response.json())
+                .then(data => {
+                    localStorage.setItem('jwtToken', data.token); // 로그인 성공 시 JWT 토큰 저장
+                    window.location.href = '/chat'; // 채팅 페이지로 리디렉션
+                })
+                .catch(error => {
+                    console.error('Error during login:', error);
+                });
+    });
+</script>
