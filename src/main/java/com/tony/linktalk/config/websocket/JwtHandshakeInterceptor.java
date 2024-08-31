@@ -21,7 +21,23 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    // todo: 클라인언트 예시: const socket = new WebSocket('ws://localhost:8080/chat?token=your-jwt-token&chatRoomId=12345');
+    //  const token = "your-jwt-token";  // 실제 JWT 토큰 값으로 변경
+    //  const chatRoomId = 12345;  // 실제 채팅방 ID로 변경
+    //
+    //  const ws = new WebSocket(`ws://localhost:8080/ws/chat?chatRoomId=${chatRoomId}`);
+    //
+    //  ws.onopen = () => {
+    //    console.log('WebSocket connection established');
+    //  };
+    //
+    //  헤더 설정을 위해 WebSocket 객체에 접근할 수 있는 경우 헤더 추가
+    //  ws.onopen = () => {
+    //    ws.send(JSON.stringify({
+    //        headers: {
+    //            'Authorization': `Bearer ${token}`
+    //        }
+    //    }));
+    // };
 
     /**
      * @param request    WebSocket 연결 요청
@@ -40,55 +56,51 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
             @NonNull WebSocketHandler wsHandler,
             @NonNull Map<String, Object> attributes // WebSocketSession.getAttributes() 으로 접근 가능
     ) throws Exception {
-        // WebSocket 연결 시, JWT 토큰을 추출하여 유효성 검사
-        String query = request.getURI().getQuery();
-        String token = UriComponentsBuilder.fromUriString("?" + query)
-                .build()
-                .getQueryParams()
-                .getFirst("token");
+        // 헤더에서 토큰 추출
+        String authHeader = request.getHeaders().getFirst("Authorization");
 
-        System.out.println("Extracted token: " + token);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            System.out.println("Extracted token: " + token);
 
-        // JWT 토큰이 유효한 경우, 속성에 사용자 정보를 추가
-        if (token != null && jwtTokenProvider.validateJwtToken(token)) {
-            Claims claims = jwtTokenProvider.getClaimsFromJwtToken(token);
-            Long memberId = jwtTokenProvider.getMemberIdFromJwtToken(token);
-            String email = claims.getSubject();
+            // JWT 토큰이 유효한 경우, 속성에 사용자 정보를 추가
+            if (jwtTokenProvider.validateJwtToken(token)) {
+                Claims claims = jwtTokenProvider.getClaimsFromJwtToken(token);
+                Long memberId = jwtTokenProvider.getMemberIdFromJwtToken(token);
+                String email = claims.getSubject();
 
-            // 속성에 사용자 정보 추가
-            attributes.put("email", email);
-            attributes.put("memberId", memberId);
-            attributes.put("nickname", claims.get("nickname", String.class));
+                // 속성에 사용자 정보 추가
+                attributes.put("email", email);
+                attributes.put("memberId", memberId);
+                attributes.put("nickname", claims.get("nickname", String.class));
 
-            // 채팅방 ID가 존재하는 경우 속성에 추가
-            String chatRoomId = UriComponentsBuilder.fromUriString("?" + query)
-                    .build()
-                    .getQueryParams()
-                    .getFirst("chatRoomId");
+                // 쿼리 파라미터에서 채팅방 ID 추출
+                String query = request.getURI().getQuery();
+                String chatRoomId = UriComponentsBuilder.fromUriString("?" + query)
+                        .build()
+                        .getQueryParams()
+                        .getFirst("chatRoomId");
 
-            System.out.println("Extracted chatRoomId: " + chatRoomId);
+                // 채팅방 ID가 존재하면 속성에 추가
+                if (chatRoomId != null) {
+                    attributes.put("chatRoomId", Long.parseLong(chatRoomId));
+                }
 
-            // 채팅방 ID가 존재하는 경우 속성에 추가
-            if (chatRoomId != null) {
-                attributes.put("chatRoomId", Long.parseLong(chatRoomId));
-                System.out.println("Stored chatRoomId in attributes: " + attributes.get("chatRoomId"));
+                System.out.println("attributes: " + attributes);
+                return true;
             }
-
-            System.out.println("attributes: " + attributes);
-            return true;
         }
 
         // JWT가 유효하지 않으면 핸드셰이크 거부
         return false;
     }
 
-
     /**
      * @param request   WebSocket 연결 요청
      * @param response  WebSocket 연결 응답
      * @param wsHandler WebSocket 핸들러
      * @param exception 예외
-     * @apiNote WebSocket 연결 후 처리
+     * @apiNote WebSocket 연결 후
      */
     @Override
     public void afterHandshake(
