@@ -21,24 +21,6 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    //  const token = "your-jwt-token";  // 실제 JWT 토큰 값으로 변경
-    //  const chatRoomId = 12345;  // 실제 채팅방 ID로 변경
-    //
-    //  const ws = new WebSocket(`ws://localhost:8080/ws/chat?chatRoomId=${chatRoomId}`);
-    //
-    //  ws.onopen = () => {
-    //    console.log('WebSocket connection established');
-    //  };
-    //
-    //  헤더 설정을 위해 WebSocket 객체에 접근할 수 있는 경우 헤더 추가
-    //  ws.onopen = () => {
-    //    ws.send(JSON.stringify({
-    //        headers: {
-    //            'Authorization': `Bearer ${token}`
-    //        }
-    //    }));
-    // };
-
     /**
      * @param request    WebSocket 연결 요청
      * @param response   WebSocket 연결 응답

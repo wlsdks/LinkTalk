@@ -43,7 +43,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     // 특정 경로를 필터링에서 제외
     private static final Set<String> EXCLUDE_URLS = Set.of(
             "/member/auth/signUp",
-            "/member/auth/signIn"
+            "/member/auth/signIn",
+            "/main",
+            "/member/login",
+            "/member/signUp",
+            "/favicon"
     );
 
     /**
@@ -65,7 +69,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
         // 특정 경로를 필터링에서 제외 (config에서 제외 불가능하기에 여기서 처리)
-        if (EXCLUDE_URLS.contains(requestURI)) {
+        if (EXCLUDE_URLS.stream().anyMatch(requestURI::startsWith)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -99,6 +103,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             );
 
             mapper.writeValue(response.getOutputStream(), body);
+            return; // 추가된 부분: 필터 체인 종료
         } catch (JwtException e) {
             log.warn("JWT processing failed: {}", e.getMessage());
             throw new JwtAuthenticationException("Invalid JWT token", e);

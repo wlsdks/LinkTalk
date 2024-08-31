@@ -98,8 +98,11 @@ public class SecurityConfig {
                 .exceptionHandling(e -> e.authenticationEntryPoint(authenticationEntryPoint)) // 인증 예외 처리 (custom 예외 처리: AuthenticationEntryPointImpl 클래스)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 상태 비저장 설정 (JWT 토큰 사용)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/member/auth/signUp").permitAll()               // 인증 없이 접근 가능한 경로 설정
-                            .requestMatchers("/member/auth/signIn").permitAll()               // 인증 없이 접근 가능한 경로 설정
+                    auth.requestMatchers("/member/auth/signUp").permitAll()
+                            .requestMatchers("/member/auth/signIn").permitAll()
+                            .requestMatchers("/main").permitAll()
+                            .requestMatchers("/member/login").permitAll()
+                            .requestMatchers("/member/signUp").permitAll()
                             .anyRequest().authenticated();                         // 나머지 요청은 인증 필요
                 })
                 .authenticationProvider(authenticationProvider())                  // DaoAuthenticationProvider를 인증 제공자로 설정 (커스텀 로그인 인증)
