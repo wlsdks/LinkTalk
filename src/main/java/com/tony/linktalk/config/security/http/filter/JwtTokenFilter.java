@@ -47,7 +47,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             "/main",
             "/member/login",
             "/member/signUp",
-            "/favicon"
+            "/favicon",
+            "/style"
     );
 
     /**

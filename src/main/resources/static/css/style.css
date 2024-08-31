@@ -1,16 +1,19 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f8f9fa;
     margin: 0;
     padding: 0;
+    color: #333;
 }
 
 .navbar {
-    background-color: #333;
+    background-color: #343a40;
     color: white;
-    padding: 15px;
+    padding: 15px 20px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand {
@@ -23,6 +26,7 @@ body {
     list-style: none;
     display: flex;
     padding: 0;
+    margin: 0;
 }
 
 .navbar-nav li {
@@ -32,31 +36,59 @@ body {
 .navbar-nav li a {
     color: white;
     text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-nav li a:hover {
+    background-color: #495057;
 }
 
 .container {
-    padding: 20px;
+    padding: 60px 20px;
 }
 
-.login-form, .signup-form {
+.login-container, .signup-container {
     background-color: white;
     padding: 30px;
     border-radius: 8px;
     max-width: 400px;
-    margin: auto;
+    margin: 50px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.form-group {
+.form-control {
+    width: 100%;
+    padding: 10px;
     margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .btn {
     width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
 }
 
 .chat-container {
     margin: 20px auto;
     max-width: 800px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .chat-window {
@@ -64,6 +96,8 @@ body {
     padding: 20px;
     background-color: white;
     border-radius: 8px;
+    height: 400px;
+    overflow-y: auto;
 }
 
 #messages {
@@ -72,18 +106,4 @@ body {
     margin-bottom: 15px;
     border-bottom: 1px solid #ccc;
     padding-bottom: 10px;
-}
-
-/* 메인 */
-.main-page {
-    text-align: center;
-    margin-top: 50px;
-}
-
-.actions {
-    margin-top: 20px;
-}
-
-.actions .btn {
-    margin: 10px;
 }

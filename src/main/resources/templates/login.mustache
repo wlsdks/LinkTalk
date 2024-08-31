@@ -21,13 +21,27 @@
             },
             body: JSON.stringify({username, password})
         })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        // If the response is not OK (status code is not in the range 200-299), throw an error
+                        throw new Error('존재하지 않는 회원입니다.');
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    localStorage.setItem('jwtToken', data.token); // 로그인 성공 시 JWT 토큰 저장
-                    window.location.href = '/chat'; // 채팅 페이지로 리디렉션
+                    // Assuming the response has a JWT token on successful login
+                    localStorage.setItem('jwtToken', data.token); // Store JWT token upon successful login
+                    window.location.href = '/main'; // Redirect to main page
                 })
                 .catch(error => {
+                    // Log the error to the console
                     console.error('Error during login:', error);
+
+                    // Display error message on the page
+                    const errorMessageElement = document.createElement('div');
+                    errorMessageElement.textContent = '로그인 실패: ' + error.message;
+                    errorMessageElement.style.color = 'red';
+                    document.querySelector('.login-container').appendChild(errorMessageElement);
                 });
     });
 </script>
