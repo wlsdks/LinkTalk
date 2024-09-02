@@ -43,6 +43,10 @@ public enum ErrorCode {
     SECURITY_USER_NOT_FOUND("SEC001", "Security user not found"),
     PASSWORD_IS_NOT_HANDLE_IN_SECURITY_USER_DETAILS("SEC002", "Password is not handle in security user details"),
 
+    // post errors
+    POST_NOT_FOUND("POST001", "Post not found"),
+
+
     ;
 
     private final String code;
