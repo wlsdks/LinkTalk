@@ -4,10 +4,10 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Builder
-@Data
-@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
+@Builder
+@Getter
 public class MemberResponseDto {
 
     private Long id;                 // PK

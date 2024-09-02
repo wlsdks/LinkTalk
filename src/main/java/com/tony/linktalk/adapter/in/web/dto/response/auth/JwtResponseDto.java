@@ -8,10 +8,10 @@ import java.util.Collection;
 /**
  * JWT 토큰 발급 응답 DTO
  */
-@Builder
-@Data
-@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
+@Builder
+@Getter
 public class JwtResponseDto {
 
     private String accessToken;
