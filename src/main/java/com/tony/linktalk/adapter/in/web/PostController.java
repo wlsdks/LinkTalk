@@ -2,7 +2,7 @@ package com.tony.linktalk.adapter.in.web;
 
 import com.tony.linktalk.adapter.in.web.dto.api.ApiResponse;
 import com.tony.linktalk.adapter.in.web.dto.response.post.PostResponseDto;
-import com.tony.linktalk.application.command.post.PostCommand;
+import com.tony.linktalk.application.command.post.FindPostCommand;
 import com.tony.linktalk.application.port.in.post.CreatePostUseCase;
 import com.tony.linktalk.application.port.in.post.DeletePostUseCase;
 import com.tony.linktalk.application.port.in.post.FindPostUseCase;
@@ -34,7 +34,7 @@ public class PostController {
     public ResponseEntity<ApiResponse<?>> findPost(
             @PathVariable("postId") Long postId
     ) {
-        PostCommand.Find command = PostCommand.Find.of(postId);
+        FindPostCommand command = FindPostCommand.of(postId);
         PostResponseDto responseDto = findPostUseCase.findPost(command);
 
         return ResponseEntity.ok(ApiResponse.success(responseDto));
