@@ -1,7 +1,7 @@
 package com.tony.linktalk.adapter.out.persistence.entity.post;
 
 import com.tony.linktalk.adapter.out.persistence.entity.BaseEntity;
-import com.tony.linktalk.adapter.out.persistence.entity.constant.post.Visibility;
+import com.tony.linktalk.adapter.out.persistence.entity.constant.post.VisibilityCode;
 import com.tony.linktalk.adapter.out.persistence.entity.member.MemberEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,8 +24,8 @@ public class PostEntity extends BaseEntity {
     private String title;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "visibility", nullable = false)
-    private Visibility visibility = Visibility.PUBLIC;
+    @Column(name = "visibilityCode", nullable = false)
+    private VisibilityCode visibilityCode = VisibilityCode.PUBLIC;
 
     @Column(name = "status")
     private String status = "active";

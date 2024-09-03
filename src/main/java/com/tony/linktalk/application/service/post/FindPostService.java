@@ -1,7 +1,7 @@
 package com.tony.linktalk.application.service.post;
 
 import com.tony.linktalk.adapter.in.web.dto.response.post.PostResponseDto;
-import com.tony.linktalk.application.command.post.FindPostCommand;
+import com.tony.linktalk.application.command.post.PostCommand;
 import com.tony.linktalk.application.port.in.post.FindPostUseCase;
 import com.tony.linktalk.application.port.out.post.FindPostPort;
 import com.tony.linktalk.domain.post.Post;
@@ -19,16 +19,14 @@ public class FindPostService implements FindPostUseCase {
     private final PostMapper postMapper;
 
     /**
-     * @param findPostCommand 게시글 ID
+     * @param findCommand 게시글 ID
      * @return 게시글 단건 조회 결과
      * @apiNote 게시글 단건 조회
      */
     @Override
-    public PostResponseDto findPost(FindPostCommand findPostCommand) {
-
-        Post findPost = findPostPort.findPostById(findPostCommand.getId());
-
-        return null;
+    public PostResponseDto findPost(PostCommand.Find findCommand) {
+        Post findPost = findPostPort.findPostById(findCommand.getId());
+        return postMapper.domainToResponseDto(findPost);
     }
 
 }
