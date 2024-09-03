@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Visibility {
+public enum VisibilityCode {
 
     PUBLIC("public", "공개"),
     PRIVATE("private", "비공개"),
@@ -18,10 +18,10 @@ public enum Visibility {
     private final String code;
     private final String description;
 
-    public static Visibility from(String value) {
-        for (Visibility visibility : values()) {
-            if (visibility.name().equalsIgnoreCase(value)) {
-                return visibility;
+    public static VisibilityCode from(String value) {
+        for (VisibilityCode visibilityCode : values()) {
+            if (visibilityCode.name().equalsIgnoreCase(value)) {
+                return visibilityCode;
             }
         }
         return PUBLIC;
