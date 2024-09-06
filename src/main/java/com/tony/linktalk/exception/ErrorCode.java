@@ -45,7 +45,7 @@ public enum ErrorCode {
 
     // post errors
     POST_NOT_FOUND("POST001", "Post not found"),
-
+    POST_ID_IS_NULL("POST002", "Post ID is null"),
 
     ;
 
