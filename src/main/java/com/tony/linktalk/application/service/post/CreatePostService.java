@@ -4,6 +4,8 @@ import com.tony.linktalk.adapter.in.web.dto.response.post.PostResponseDto;
 import com.tony.linktalk.application.command.post.CreatePostCommand;
 import com.tony.linktalk.application.port.in.post.CreatePostUseCase;
 import com.tony.linktalk.application.port.out.post.CreatePostPort;
+import com.tony.linktalk.domain.post.Post;
+import com.tony.linktalk.mapper.PostMapper;
 import com.tony.linktalk.util.custom.UseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CreatePostService implements CreatePostUseCase {
 
     private final CreatePostPort createPostPort;
+    private final PostMapper postMapper;
 
 
     /**
@@ -24,9 +27,10 @@ public class CreatePostService implements CreatePostUseCase {
     @Transactional
     @Override
     public PostResponseDto createPost(CreatePostCommand command) {
+        Post post = postMapper.commandToDomain(command);
+        Post createdPost = createPostPort.createPost(post);
 
-
-        return null;
+        return postMapper.domainToResponseDto(createdPost);
     }
 
 }
