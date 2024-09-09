@@ -19,4 +19,6 @@ public interface PostMapper {
 
     Post commandToDomain(CreatePostCommand command);
 
+    PostEntity domainToEntity(Post post);
+
 }

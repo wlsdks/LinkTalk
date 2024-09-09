@@ -30,4 +30,22 @@ public class PostPersistenceAdapter implements CreatePostPort, FindPostPort, Upd
         return postMapper.entityToDomain(postEntity);
     }
 
+
+    @Override
+    public Post createPost(Post post) {
+        PostEntity postEntity = postMapper.domainToEntity(post);
+        PostEntity savedPostEntity = postRepository.save(postEntity);
+
+        return postMapper.entityToDomain(savedPostEntity);
+    }
+
+
+    @Override
+    public Post updatePost(Post post) {
+        PostEntity postEntity = postMapper.domainToEntity(post);
+        PostEntity savedPostEntity = postRepository.save(postEntity);
+
+        return postMapper.entityToDomain(savedPostEntity);
+    }
+
 }
