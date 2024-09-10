@@ -48,4 +48,10 @@ public class PostPersistenceAdapter implements CreatePostPort, FindPostPort, Upd
         return postMapper.entityToDomain(savedPostEntity);
     }
 
+
+    @Override
+    public void deletePost(Long postId) {
+        postRepository.deleteById(postId);
+    }
+
 }

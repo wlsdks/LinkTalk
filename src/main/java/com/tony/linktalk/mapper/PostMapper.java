@@ -3,6 +3,7 @@ package com.tony.linktalk.mapper;
 import com.tony.linktalk.adapter.in.web.dto.response.post.PostResponseDto;
 import com.tony.linktalk.adapter.out.persistence.entity.post.PostEntity;
 import com.tony.linktalk.application.command.post.CreatePostCommand;
+import com.tony.linktalk.application.command.post.UpdatePostCommand;
 import com.tony.linktalk.domain.post.Post;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -17,8 +18,10 @@ public interface PostMapper {
 
     PostResponseDto domainToResponseDto(Post post);
 
+    PostEntity domainToEntity(Post post);
+
     Post commandToDomain(CreatePostCommand command);
 
-    PostEntity domainToEntity(Post post);
+    Post commandToDomain(UpdatePostCommand command);
 
 }
