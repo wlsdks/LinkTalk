@@ -1,5 +1,6 @@
 package com.tony.linktalk.application.service.post;
 
+import com.tony.linktalk.adapter.in.web.dto.response.post.PostResponseDto;
 import com.tony.linktalk.application.port.out.post.UpdatePostPort;
 import com.tony.linktalk.mapper.PostMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +28,7 @@ class UpdatePostServiceTest {
         //given
 
         //when
-        sut.updatePost(null);
+        PostResponseDto responseDto = sut.updatePost(null);
 
         //then
 
