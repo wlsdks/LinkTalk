@@ -3,6 +3,7 @@ package com.tony.linktalk.application.service.post;
 import com.tony.linktalk.adapter.in.web.dto.response.post.PostResponseDto;
 import com.tony.linktalk.application.port.out.post.UpdatePostPort;
 import com.tony.linktalk.mapper.PostMapper;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,8 @@ class UpdatePostServiceTest {
         //when
         PostResponseDto responseDto = sut.updatePost(null);
 
-        //then
-
+        //then\
+        Assertions.assertThat(responseDto).isNotNull();
     }
 
 }
