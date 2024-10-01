@@ -64,7 +64,7 @@ public class FileController {
      * @return ResponseEntity<Resource>
      * @apiNote 파일 다운로드 API
      */
-    @GetMapping("/{filename}")
+    @GetMapping("/{filename}/download")
     public ResponseEntity<Resource> downloadFile(@PathVariable String filename) {
         try {
             // 설정 파일에서 업로드 디렉토리 경로를 가져옴
