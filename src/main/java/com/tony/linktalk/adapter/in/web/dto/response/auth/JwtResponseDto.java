@@ -24,11 +24,11 @@ public class JwtResponseDto {
     }
 
     public static JwtResponseDto of(String accessToken, String refreshToken, String email) {
-        return new JwtResponseDto(accessToken, refreshToken, email, null);
+        return of(accessToken, refreshToken, email, null);
     }
 
     public static JwtResponseDto of(String accessToken, String refreshToken) {
-        return new JwtResponseDto(accessToken, refreshToken, null, null);
+        return of(accessToken, refreshToken, null, null);
     }
 
 }
